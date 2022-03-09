@@ -1,3 +1,4 @@
 # Plán reportu
 *Sem průběžně pište, co vás napadne, že by se hodilo do reportu, ať ho pak máme z čeho dělat. Řekněme, že tady ten soubor je jen pro nás takže bych ho nechal v libovolném jazyku a formátu. Prostě sem si pište co chete a pak to smažeme.*
--
+
+Povedl se mi nastavit gpg signing na windows s git bash. Klíč jsem vygeneroval podle tady [tohoto](https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key) a pak už jsem postupoval podle [návodu z přezentace předmětu](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits).
