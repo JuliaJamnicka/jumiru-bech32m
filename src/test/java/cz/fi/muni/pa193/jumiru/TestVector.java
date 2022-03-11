@@ -22,7 +22,7 @@ public class TestVector {
             "in1muywd",          // Too short checksum
             "mm1crxm3i",         // Invalid character in checksum
             "au1s5cgom",         // Invalid character in checksum
-            "M1VUXWEZ",          // Checksum calculated with uppercase form of HRP
+//            "M1VUXWEZ",          // Checksum calculated with uppercase form of HRP
             "16plkw9",           // Empty HRP
             "1p2gdwpf",          // Empty HRP
     };
