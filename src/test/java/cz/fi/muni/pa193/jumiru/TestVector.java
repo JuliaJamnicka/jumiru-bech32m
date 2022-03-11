@@ -1,3 +1,5 @@
+package cz.fi.muni.pa193.jumiru;
+
 public class TestVector {
     public static final String[] VALID_BECH32M = {
             "A1LQFN3A",
