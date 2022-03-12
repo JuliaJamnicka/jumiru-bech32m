@@ -2,7 +2,6 @@ package cz.fi.muni.pa193.jumiru;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public final class Bech32mModule implements Bech32mTransformer {
 
@@ -128,7 +127,7 @@ public final class Bech32mModule implements Bech32mTransformer {
         return true;
     }
 
-    public Bech32mData decodeBech32mString(String str) {
+    public Bech32mInputData decodeBech32mString(String str) {
 
         if (!checkBech32mString(str)) {
             throw new IllegalArgumentException();
@@ -143,6 +142,26 @@ public final class Bech32mModule implements Bech32mTransformer {
             throw new IllegalArgumentException();
         }
 
-        return new Bech32mData(hrPart, data.subList(0, data.size() - 6));
+        return new Bech32mInputData(hrPart, data.subList(0, data.size() - 6));
+    }
+
+    @Override
+    public String encodeBech32mString(Bech32mInputData input) {
+        String output = input.getHrPart();
+        if (!output.equals(output.toLowerCase())) {
+            throw new IllegalArgumentException();
+        }
+        List<Byte> data = input.getDataPart();
+        data.addAll(calculateChecksum(input));
+        output = output.concat("1");
+        for (byte c: data) {
+            //convert to StringBuilder
+            output = output + CHARSET.charAt(c);
+        }
+        return output;
+    }
+
+    public List<Byte> calculateChecksum(Bech32mInputData input) {
+        return new ArrayList<>();
     }
 }

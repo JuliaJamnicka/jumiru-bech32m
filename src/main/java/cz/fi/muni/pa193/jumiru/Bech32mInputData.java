@@ -1,19 +1,20 @@
 package cz.fi.muni.pa193.jumiru;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class Bech32mData {
+public class Bech32mInputData {
     private final String hrPart;
     private final List<Byte> dataPart;
 
-    public Bech32mData(String hrPart, List<Byte> dataPart) {
+    public Bech32mInputData(String hrPart, List<Byte> dataPart) {
         this.hrPart = hrPart;
         this.dataPart = dataPart;
     }
 
-    public Bech32mData(String hrPart, String hexDataPart) {
+    public Bech32mInputData(String hrPart, String hexDataPart) {
         this.hrPart = hrPart;
         this.dataPart = convertHexToBytes(hexDataPart);
     }
@@ -34,12 +35,20 @@ public class Bech32mData {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Bech32mData that = (Bech32mData) o;
+        Bech32mInputData that = (Bech32mInputData) o;
         return Objects.equals(hrPart, that.hrPart) && Objects.equals(dataPart, that.dataPart);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(hrPart, dataPart);
+    }
+
+    public String getHrPart() {
+        return hrPart;
+    }
+
+    public List<Byte> getDataPart() {
+        return Collections.unmodifiableList(dataPart);
     }
 }
