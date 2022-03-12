@@ -10,6 +10,22 @@ public class TestVectors {
             "split1checkupstagehandshakeupstreamerranterredcaperredlc445v",
             "?1v759aa"
     };
+
+    public static final Bech32mData[] VALID_BECH32_DECODINGS = {
+            new Bech32mData("a", ""),
+            new Bech32mData("a", ""),
+            new Bech32mData("an83characterlonghumanreadablepartthatcontainsthetheexcludedcharacters" +
+                    "bioandnumber1", ""),
+            new Bech32mData("abcdef", "1f1e1d1c1b1a191817161514131211100f0e0d0c0b0a090807" +
+                    "06050403020100"),
+            new Bech32mData("1", "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1" +
+                    "f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1" +
+                    "f1f1f1f1f1f1f1f1f1f1f1f1f"),
+            new Bech32mData("split", "18171918161c01100b1d0819171d130d10171d16191c01100b0" +
+                    "3191d1b1903031d130b190303190d181d01190303190d"),
+            new Bech32mData("?", "")
+    };
+
     public static final String[] INVALID_BECH32M = {
             " 1xj0phk",          // HRP character out of range
             (char)0x7F + "1g6xzxy",  // HRP character out of range

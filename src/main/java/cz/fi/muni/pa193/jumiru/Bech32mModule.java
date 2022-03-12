@@ -2,6 +2,7 @@ package cz.fi.muni.pa193.jumiru;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public final class Bech32mModule implements Bech32mTransformer {
 
@@ -130,18 +131,18 @@ public final class Bech32mModule implements Bech32mTransformer {
     public Bech32mData decodeBech32mString(String str) {
 
         if (!checkBech32mString(str)) {
-            return new Bech32mData(null, null);
+            throw new IllegalArgumentException();
         }
 
         int separatorPos = str.lastIndexOf('1');
 
-        String hrPart = str.substring(0, separatorPos);
+        String hrPart = str.substring(0, separatorPos).toLowerCase();
         List<Byte> data = decodeDataPart(str.substring(separatorPos + 1));
 
         if (!verifyChecksum(hrPart, data)) {
-            return new Bech32mData(null, null);
+            throw new IllegalArgumentException();
         }
 
-        return new Bech32mData(hrPart, data);
+        return new Bech32mData(hrPart, data.subList(0, data.size() - 6));
     }
 }
