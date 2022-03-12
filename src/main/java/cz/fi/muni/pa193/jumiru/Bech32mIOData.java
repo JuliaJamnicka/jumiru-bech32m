@@ -5,8 +5,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Representation of input data to be encoded/output data that were decoded.
+ */
 public class Bech32mIOData {
+
+    /**
+     * Human-readable part of data.
+     */
     private final String hrPart;
+
+    /**
+     * Data part of data.
+     */
     private final List<Byte> dataPart;
 
     public Bech32mIOData(String hrPart, List<Byte> dataPart) {
