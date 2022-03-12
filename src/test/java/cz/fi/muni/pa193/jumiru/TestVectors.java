@@ -11,19 +11,19 @@ public class TestVectors {
             "?1v759aa"
     };
 
-    public static final Bech32mInputData[] VALID_BECH32_DECODINGS = {
-            new Bech32mInputData("a", ""),
-            new Bech32mInputData("a", ""),
-            new Bech32mInputData("an83characterlonghumanreadablepartthatcontainsthetheexcludedcharacters" +
+    public static final Bech32mIOData[] VALID_BECH32_DECODINGS = {
+            new Bech32mIOData("a", ""),
+            new Bech32mIOData("a", ""),
+            new Bech32mIOData("an83characterlonghumanreadablepartthatcontainsthetheexcludedcharacters" +
                     "bioandnumber1", ""),
-            new Bech32mInputData("abcdef", "1f1e1d1c1b1a191817161514131211100f0e0d0c0b0a090807" +
+            new Bech32mIOData("abcdef", "1f1e1d1c1b1a191817161514131211100f0e0d0c0b0a090807" +
                     "06050403020100"),
-            new Bech32mInputData("1", "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1" +
+            new Bech32mIOData("1", "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1" +
                     "f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1" +
                     "f1f1f1f1f1f1f1f1f1f1f1f1f"),
-            new Bech32mInputData("split", "18171918161c01100b1d0819171d130d10171d16191c01100b0" +
+            new Bech32mIOData("split", "18171918161c01100b1d0819171d130d10171d16191c01100b0" +
                     "3191d1b1903031d130b190303190d181d01190303190d"),
-            new Bech32mInputData("?", "")
+            new Bech32mIOData("?", "")
     };
 
     public static final String[] INVALID_BECH32M = {

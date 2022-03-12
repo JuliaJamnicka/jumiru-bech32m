@@ -11,21 +11,21 @@ public class Bech32mModuleTest {
     private static final Bech32mModule module = new Bech32mModule();
 
     @Test
-    public void ValidStringsTest() {
+    public void CheckValidStringsTest() {
         for (String test_vector : TestVectors.VALID_BECH32M) {
             assertTrue(module.checkBech32mString(test_vector));
         }
     }
 
     @Test
-    public void InvalidStringsTest() {
+    public void CheckInvalidStringsTest() {
         for (String test_vector : TestVectors.INVALID_BECH32M) {
             assertFalse(module.checkBech32mString(test_vector));
         }
     }
 
     @Test
-    public void InvalidChecksumTest() {
+    public void CheckInvalidChecksumTest() {
         for (String test_vector : TestVectors.INVALID_BECH32M) {
             assertThrows(IllegalArgumentException.class, () -> module.decodeBech32mString(test_vector));
         }
@@ -34,9 +34,17 @@ public class Bech32mModuleTest {
     @Test
     public void DecodeValidStringsTest() {
         for (int i = 0; i < TestVectors.VALID_BECH32M.length; i++) {
-            var decoded = module.decodeBech32mString(TestVectors.VALID_BECH32M[i]);
-            assertEquals(decoded,
+            assertEquals(module.decodeBech32mString(TestVectors.VALID_BECH32M[i]),
                     TestVectors.VALID_BECH32_DECODINGS[i]);
+        }
+    }
+
+    @Test
+    public void EncodeToValidStringsTest() {
+        for (int i = 0; i < TestVectors.VALID_BECH32M.length; i++) {
+            //test vectors converted to lower case as encoder must always output lower case
+            assertEquals(module.encodeBech32mString(TestVectors.VALID_BECH32_DECODINGS[i]),
+                    TestVectors.VALID_BECH32M[i].toLowerCase());
         }
     }
 }

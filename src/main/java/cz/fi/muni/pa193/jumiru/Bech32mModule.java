@@ -127,7 +127,7 @@ public final class Bech32mModule implements Bech32mTransformer {
         return true;
     }
 
-    public Bech32mInputData decodeBech32mString(String str) {
+    public Bech32mIOData decodeBech32mString(String str) {
 
         if (!checkBech32mString(str)) {
             throw new IllegalArgumentException();
@@ -142,16 +142,16 @@ public final class Bech32mModule implements Bech32mTransformer {
             throw new IllegalArgumentException();
         }
 
-        return new Bech32mInputData(hrPart, data.subList(0, data.size() - 6));
+        return new Bech32mIOData(hrPart, data.subList(0, data.size() - 6));
     }
 
     @Override
-    public String encodeBech32mString(Bech32mInputData input) {
+    public String encodeBech32mString(Bech32mIOData input) {
         String output = input.getHrPart();
         if (!output.equals(output.toLowerCase())) {
             throw new IllegalArgumentException();
         }
-        List<Byte> data = input.getDataPart();
+        List<Byte> data = new ArrayList<>(input.getDataPart());
         data.addAll(calculateChecksum(input));
         output = output.concat("1");
         for (byte c: data) {
@@ -161,7 +161,18 @@ public final class Bech32mModule implements Bech32mTransformer {
         return output;
     }
 
-    public List<Byte> calculateChecksum(Bech32mInputData input) {
-        return new ArrayList<>();
+    public List<Byte> calculateChecksum(Bech32mIOData input) {
+        List<Byte> data = expandHrPart(input.getHrPart());
+        data.addAll(input.getDataPart());
+        for (int i = 0; i < 6; i++) {
+            data.add((byte) 0);
+        }
+        int result = bech32mPolymod(data) ^ BECH32M_CHECKSUM_CONSTANT;
+        ArrayList<Byte> checksum = new ArrayList<>();
+        checksum.ensureCapacity(6);
+        for (int i = 0; i < 6; i++) {
+            checksum.add((byte) ((result >> (5 * (5 - i))) & 31));
+        }
+        return checksum;
     }
 }

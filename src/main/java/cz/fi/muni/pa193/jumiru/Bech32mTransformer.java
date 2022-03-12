@@ -8,9 +8,9 @@ public interface Bech32mTransformer {
 
     boolean verifyChecksum(String hrPart, List<Byte> dataPart);
 
-    Bech32mInputData decodeBech32mString(String str);
+    Bech32mIOData decodeBech32mString(String str);
 
-    String encodeBech32mString(Bech32mInputData input);
+    String encodeBech32mString(Bech32mIOData input);
 
-    List<Byte> calculateChecksum(Bech32mInputData input);
+    List<Byte> calculateChecksum(Bech32mIOData input);
 }
