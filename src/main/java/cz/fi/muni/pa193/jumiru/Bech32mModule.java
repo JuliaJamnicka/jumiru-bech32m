@@ -117,8 +117,7 @@ public final class Bech32mModule implements Bech32mTransformer {
 
     @Override
     public String encodeBech32mString(Bech32mIOData input) {
-        String hrPart = input.getHrPart();
-        if (!hrPart.equals(hrPart.toLowerCase())) throw new IllegalArgumentException();
+        String hrPart = input.getHrPart().toLowerCase();
 
         StringBuilder output = new StringBuilder(hrPart);
         output.append('1');
