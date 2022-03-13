@@ -9,9 +9,10 @@ public interface Bech32mTransformer {
      * DOES NOT CHECK WHETHER CHECKSUM IS CORRECT!
      *
      * @param  str  string to check
-     * @return      true if str is valid Bech32m string, false otherwise
+     * @return      void
+     * @throws Bech32mException for invalid string
      */
-    boolean checkBech32mString(String str);
+    void checkBech32mString(String str);
 
     /**
      * Verify whether checksum of Bech32m string is correct.
