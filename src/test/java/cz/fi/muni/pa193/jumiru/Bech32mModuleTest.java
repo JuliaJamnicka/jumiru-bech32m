@@ -2,10 +2,7 @@ package cz.fi.muni.pa193.jumiru;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Bech32mModuleTest {
     private static final Bech32mModule module = new Bech32mModule();
@@ -13,21 +10,21 @@ public class Bech32mModuleTest {
     @Test
     public void CheckValidStringsTest() {
         for (String test_vector : TestVectors.VALID_BECH32M) {
-            assertTrue(module.checkBech32mString(test_vector));
+            assertDoesNotThrow(() -> module.checkBech32mString(test_vector));
         }
     }
 
     @Test
     public void CheckInvalidStringsTest() {
         for (String test_vector : TestVectors.INVALID_BECH32M) {
-            assertFalse(module.checkBech32mString(test_vector));
+            assertThrows(Bech32mException.class, () -> module.checkBech32mString(test_vector));
         }
     }
 
     @Test
     public void CheckInvalidChecksumTest() {
         for (String test_vector : TestVectors.INVALID_BECH32M) {
-            assertThrows(IllegalArgumentException.class, () -> module.decodeBech32mString(test_vector));
+            assertThrows(Bech32mException.class, () -> module.decodeBech32mString(test_vector));
         }
     }
 

@@ -13,36 +13,23 @@ public final class Bech32mModule implements Bech32mTransformer {
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
             15, -1, 10, 17, 21, 20, 26, 30,  7,  5, -1, -1, -1, -1, -1, -1,
             -1, 29, -1, 24, 13, 25,  9,  8, 23, -1, 18, 22, 31, 27, 19, -1,
-            1,  0,  3, 16, 11, 28, 12, 14,  6,  4,  2, -1, -1, -1, -1, -1,
+             1,  0,  3, 16, 11, 28, 12, 14,  6,  4,  2, -1, -1, -1, -1, -1,
             -1, 29, -1, 24, 13, 25,  9,  8, 23, -1, 18, 22, 31, 27, 19, -1,
-            1,  0,  3, 16, 11, 28, 12, 14,  6,  4,  2, -1, -1, -1, -1, -1
+             1,  0,  3, 16, 11, 28, 12, 14,  6,  4,  2, -1, -1, -1, -1, -1
     };
 
     private int bech32mPolymod(List<Byte> expandedParts) {
         int c = 1;
+        int[] GEN = {0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3};
         for (byte value: expandedParts) {
             byte c0 = (byte) (c >>> 25);
-
             c = ((c & 0x1ffffff) << 5) ^ value;
-
-            if ((c0 & 1) == 1) {
-                c ^= 0x3b6a57b2;
-            }
-
-            if ((c0 & 2) == 2) {
-                c ^= 0x26508e6d;
-            }
-
-            if ((c0 & 4) == 4) {
-                c ^= 0x1ea119fa;
-            }
-
-            if ((c0 & 8) == 8) {
-                c ^= 0x3d4233dd;
-            }
-
-            if ((c0 & 16) == 16) {
-                c ^= 0x2a1462b3;
+            int p = 1;
+            for (int i = 0; i<5; i++) {
+                if ((c0 & p) == p) {
+                    c ^= GEN[i];
+                }
+                p *= 2;
             }
         }
         return c;
@@ -78,87 +65,71 @@ public final class Bech32mModule implements Bech32mTransformer {
         return bech32mPolymod(expandedHrPart) == BECH32M_CHECKSUM_CONSTANT;
     }
 
-    public boolean checkBech32mString(String str) {
-
-        if (str == null) {
-            return false;
-        }
-
-        if (!str.equals(str.toLowerCase()) &&
-                !str.equals(str.toUpperCase())) {
-            return false;
-        }
+    public void checkBech32mString(String str) {
+        if (str == null) throw new Bech32mException("Invalid Bech32m to decode: Null string");
+        if (!str.equals(str.toLowerCase()) && !str.equals(str.toUpperCase()))
+            throw new Bech32mException("Invalid Bech32m to decode: Mixed case");
 
         str = str.toLowerCase();
 
-        boolean dataPart = true;
+        boolean separatorFound = false;
         int separatorPos = 0;
         for (int i = str.length() - 1; i >= 0; i--) {
-
-            if (str.charAt(i) == '1' && dataPart) {
-                dataPart = false;
+            if (str.charAt(i) == '1' && !separatorFound) {
+                separatorFound = true;
                 separatorPos = i;
                 continue;
             }
 
-            if (dataPart) {
-                if (CHARSET.indexOf(str.charAt(i)) == -1) {
-                    return false;
-                }
+            if (!separatorFound) {
+                if (CHARSET.indexOf(str.charAt(i)) == -1)
+                    throw new Bech32mException("Invalid Bech32m to decode: Unsupported character " +
+                            "in the data part");
             } else {
-                if (str.charAt(i) < 33 || str.charAt(i) > 126) {
-                    return false;
-                }
+                if (str.charAt(i) < 33 || str.charAt(i) > 126)
+                    throw new Bech32mException("Invalid Bech32m to decode: Unsupported character " +
+                            "in the human readable part");
             }
         }
 
-        if (dataPart) {
-            return false;
-        }
-
-        if (separatorPos == 0 || separatorPos >= 84) {
-            return false;
-        }
-
-        if (str.length() - separatorPos < 7) {
-            return false;
-        }
-
-        return true;
+        if (!separatorFound) throw new Bech32mException("Invalid Bech32m to decode: Missing " +
+                "separator");
+        if (separatorPos == 0) throw new Bech32mException("Invalid Bech32m to decode: Missing " +
+                "human readable part");
+        if (separatorPos >= 84) throw new Bech32mException("Invalid Bech32m to decode: String too" +
+                " long");
+        if (str.length() - separatorPos < 7) throw new Bech32mException("Invalid Bech32m to " +
+                "decode: Data part too short");
     }
 
     public Bech32mIOData decodeBech32mString(String str) {
-
-        if (!checkBech32mString(str)) {
-            throw new IllegalArgumentException();
-        }
+        checkBech32mString(str);
 
         int separatorPos = str.lastIndexOf('1');
 
         String hrPart = str.substring(0, separatorPos).toLowerCase();
         List<Byte> data = decodeDataPart(str.substring(separatorPos + 1));
 
-        if (!verifyChecksum(hrPart, data)) {
-            throw new IllegalArgumentException();
-        }
+        if (!verifyChecksum(hrPart, data)) throw new Bech32mException("Invalid checksum");
 
         return new Bech32mIOData(hrPart, data.subList(0, data.size() - 6));
     }
 
     @Override
     public String encodeBech32mString(Bech32mIOData input) {
-        String output = input.getHrPart();
-        if (!output.equals(output.toLowerCase())) {
-            throw new IllegalArgumentException();
-        }
+        String hrPart = input.getHrPart();
+        if (!hrPart.equals(hrPart.toLowerCase())) throw new IllegalArgumentException();
+
+        StringBuilder output = new StringBuilder(hrPart);
+        output.append('1');
+
         List<Byte> data = new ArrayList<>(input.getDataPart());
         data.addAll(calculateChecksum(input));
-        output = output.concat("1");
         for (byte c: data) {
-            //convert to StringBuilder
-            output = output + CHARSET.charAt(c);
+            output.append(CHARSET.charAt(c));
         }
-        return output;
+
+        return output.toString();
     }
 
     public List<Byte> calculateChecksum(Bech32mIOData input) {
