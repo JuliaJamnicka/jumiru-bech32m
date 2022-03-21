@@ -1,6 +1,6 @@
 package cz.fi.muni.pa193.jumiru;
 
-public interface Bech32mOutputConverter {
+public interface OutputConverter {
     /**
      * Given a Bech32mIOData object, returns the Bech32m string with the data part
      * in binary representation

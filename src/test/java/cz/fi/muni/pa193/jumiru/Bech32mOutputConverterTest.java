@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 
 public class Bech32mOutputConverterTest {
-    private static final Bech32mDataOutputConverter converter = new Bech32mDataOutputConverter();
+    private static final DataOutputConverter converter = new DataOutputConverter();
 
     @ParameterizedTest
     @MethodSource("provideBinParams")

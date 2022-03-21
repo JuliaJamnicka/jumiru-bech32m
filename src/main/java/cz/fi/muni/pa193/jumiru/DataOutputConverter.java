@@ -4,7 +4,7 @@ import java.util.function.IntFunction;
 import java.util.Base64;
 import java.util.List;
 
-public class Bech32mDataOutputConverter implements Bech32mOutputConverter {
+public class DataOutputConverter implements OutputConverter {
 
     private String convert(Bech32mIOData data, IntFunction<String> integerFunction) {
         StringBuilder data_builder = new StringBuilder();
