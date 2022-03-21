@@ -15,11 +15,17 @@ public class DataOutputConverter implements OutputConverter {
     }
 
     public String convertToBinary(Bech32mIOData data) {
-        return convert(data, x -> String.format("%8s", Integer.toBinaryString(x & 0xFF)).replace(' ', '0'));
+        return convert(data, x -> String
+            .format("%8s", Integer.toBinaryString(x & 0xFF))
+            .replace(' ', '0')
+        );
     }
 
     public String convertToHex(Bech32mIOData data) {
-        return convert(data, x -> String.format("%2s", Integer.toHexString(x & 0xFF)).replace(' ', '0'));
+        return convert(data, x -> String
+            .format("%2s", Integer.toHexString(x & 0xFF))
+            .replace(' ', '0')
+        );
     }
 
     public String convertToBase64(Bech32mIOData data) {

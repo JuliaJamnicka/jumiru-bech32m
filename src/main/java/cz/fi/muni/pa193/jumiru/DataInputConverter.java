@@ -7,10 +7,13 @@ import java.util.List;
 
 public class DataInputConverter implements InputConverter {
 
+    private String padZerosToString(String input, int n) {
+        int zeroes_to_add = n - (input.length() % n);
+        return "0".repeat(zeroes_to_add % n) + input;
+    }
+
     public String convertFromBinary(String bech32mDataInput) {
-        // padding zeroes to the beginning of the string
-        int zeroes_to_add = 8 - (bech32mDataInput.length() % 8);
-        String data = "0".repeat(zeroes_to_add % 8) + bech32mDataInput;
+        String data = padZerosToString(bech32mDataInput, 8);
 
         StringBuilder hexBuilder = new StringBuilder();
 
