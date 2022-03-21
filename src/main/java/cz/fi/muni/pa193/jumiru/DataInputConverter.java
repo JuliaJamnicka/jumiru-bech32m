@@ -23,10 +23,6 @@ public class DataInputConverter implements InputConverter {
         return hexBuilder.toString();
     }
 
-    public String convertFromHex(String bech32mDataInput) {
-        return bech32mDataInput;
-    }
-
     public List<Byte> convertFromBase64(String bech32mDataInput) {
         byte[] decoded = Base64.getDecoder().decode(bech32mDataInput);
         List<Byte> bytes = new ArrayList<Byte>();

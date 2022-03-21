@@ -14,18 +14,8 @@ public interface InputConverter {
     String convertFromBinary(String bech32mDataInput);
 
     /**
-     * Given a string with the data part in hexadecimal representation,
-     * converts the data part to Bech32m and returns the new Bech32m string
-     * (-> to be passed to Bech32mIOData constructor hex variant)
-     *
-     * @param  bech32mDataInput     string to convert
-     * @return                      the Bech32m string with converted data part
-     */
-    String convertFromHex(String bech32mDataInput);
-
-    /**
      * Given a Bech32m string with the data part in Base64 representation,
-     * converts the data part to Bech32m and returns the new Bech32
+     * converts the data part to a list of bytes
      * (to be passed to the Bech32mIOData contructor List<Byte> variant)
      *
      * @param  bech32mDataInput     string to convert

@@ -52,17 +52,6 @@ public class Bech32mInputConverterTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-        "1f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100",
-        "18171918161c01100b1d0819171d130d10171d16191c01100b03191d1b1903031d130b190303190d181d01190303190d",
-        "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f" + 
-        "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f"
-    })
-    public void CheckValidHexConversion(String hex) {
-        assertEquals(hex, converter.convertFromHex(hex));
-    }
-
-    @ParameterizedTest
     @MethodSource("provideBase64Params")
     public void CheckValidFromBase64Conversion(String hex, String base64string) {
         List<Byte> byteArray = converter.convertFromBase64(base64string);
