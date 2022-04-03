@@ -111,11 +111,10 @@ public final class Bech32mModule implements Bech32mTransformer {
         List<Byte> data = decodeDataPart(str.substring(separatorPos + 1));
 
         if (!verifyChecksum(hrPart, data)) {
-            if (performErrorCorrection) {
-                throw new Bech32mException("Invalid checksum.");
+            if (!performErrorCorrection) {
+                throw new Bech32mInvalidChecksumException();
             } else {
-                throw new Bech32mException("Invalid checksum. Error correction found these candidates for " +
-                        "corrected original string:" + findPossibleErrorCorrections(hrPart, data));
+                throw new Bech32mInvalidChecksumException(findPossibleErrorCorrections(hrPart, data));
             }
         }
 
@@ -145,7 +144,7 @@ public final class Bech32mModule implements Bech32mTransformer {
         for (int i = 0; i < hrPartMutable.length(); i++) {
             char originalValue = hrPartMutable.charAt(i);
             for (char replacement = 33; replacement < 127; replacement++) {
-                if (replacement == originalValue) {
+                if (replacement == originalValue || (replacement >= 65 && replacement <= 90)) {
                     continue;
                 }
                 hrPartMutable.setCharAt(i, replacement);

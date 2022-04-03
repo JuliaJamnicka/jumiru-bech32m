@@ -8,7 +8,10 @@ public class TestVectors {
             "abcdef1l7aum6echk45nj3s0wdvt2fg8x9yrzpqzd3ryx",
             "11llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllludsr8",
             "split1checkupstagehandshakeupstreamerranterredcaperredlc445v",
-            "?1v759aa"
+            "?1v759aa",
+            // additional test vector from feedback mail
+            "abcdef140x77khk82w",
+            //"test1wejkxar0wg64ekuu" // wrong decoding?, will consult via email
     };
 
     public static final Bech32mIOData[] VALID_BECH32_DECODINGS = {
@@ -23,7 +26,22 @@ public class TestVectors {
                     "f1f1f1f1f1f1f1f1f1f1f1f1f"),
             new Bech32mIOData("split", "18171918161c01100b1d0819171d130d10171d16191c01100b0" +
                     "3191d1b1903031d130b190303190d181d01190303190d"),
-            new Bech32mIOData("?", "")
+            new Bech32mIOData("?", ""),
+            new Bech32mIOData("abcdef", "150f061e1e"),
+            //new Bech32mIOData("test", "766563746f72")
+    };
+
+    public static final String[] INVALID_CORRECTS_TO_VALID_BECH32M = {
+            // error in hrp
+            "B1LQFN3A",
+            "b1lqfn3a",
+            "an84characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11sg7hg6",
+            // error in data part
+            "abcdef1p7aum6echk45nj3s0wdvt2fg8x9yrzpqzd3ryx",
+            "11lllllllllllllllllllllllllllllllllllllllllllllllllllrllllllllllllllllllllllllllllllludsr8",
+            "split1cheqkupstagehandshakeupstreamerranterredcaperredlc445v",
+            "!1v759aa", // error in data part
+            "zbcdef140x77khk82w", // error in hrp
     };
 
     public static final String[] INVALID_BECH32M = {
@@ -44,5 +62,22 @@ public class TestVectors {
 
     public static final String[] INVALID_BECH32M_CHECKSUM = {
             "M1VUXWEZ",          // Checksum calculated with uppercase form of HRP
+            // valid bech32m strings with modified checksum
+            "an83characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11sg7hg5",
+            "11llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllluusr8",
+            "?1v759la",
+            "abcdef140x77khk8hw",
+            "a1lqfffa",
+            // valid bech32m strings with modified hrp
+            "b1lqfn3a",
+            "an66characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11sg7hg6",
+            "zbcdef1l7aum6echk45nj3s0wdvt2fg8x9yrzpqzd3ryx",
+            "61llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllludsr8",
+            "!1v759aa",
+            // valid bech32m string with modified data part (not checksum)
+            "abcdef1l7aum6echk55nj3s0wdvt2fg8x9yrzpqzd3ryx",
+            "11lllllllllllllllrrrllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllludsr8",
+            "split1cheqkupstagehandshakeupstreamerranterredcaperredlc445v",
+            "abcdef140y77khk82w"
     };
 }
