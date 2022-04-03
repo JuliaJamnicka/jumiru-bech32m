@@ -102,7 +102,7 @@ public final class Bech32mModule implements Bech32mTransformer {
                 "decode: Data part too short");
     }
 
-    public Bech32mIOData decodeBech32mString(String str) {
+    public Bech32mIOData decodeBech32mString(String str, boolean performErrorCorrection) {
         checkBech32mString(str);
 
         int separatorPos = str.lastIndexOf('1');
@@ -111,14 +111,18 @@ public final class Bech32mModule implements Bech32mTransformer {
         List<Byte> data = decodeDataPart(str.substring(separatorPos + 1));
 
         if (!verifyChecksum(hrPart, data)) {
-            throw new Bech32mException("Invalid checksum. Error correction found these candidates for " +
-                    "original valid string:" + performErrorCorrection(hrPart, data));
+            if (performErrorCorrection) {
+                throw new Bech32mException("Invalid checksum.");
+            } else {
+                throw new Bech32mException("Invalid checksum. Error correction found these candidates for " +
+                        "corrected original string:" + findPossibleErrorCorrections(hrPart, data));
+            }
         }
 
         return new Bech32mIOData(hrPart, data.subList(0, data.size() - 6));
     }
 
-    private List<String> performErrorCorrection(String hrPart, List<Byte> data) {
+    private List<String> findPossibleErrorCorrections(String hrPart, List<Byte> data) {
         List<String> candidates = new ArrayList<>();
 
         List<Byte> dataPart = new ArrayList<>(data);

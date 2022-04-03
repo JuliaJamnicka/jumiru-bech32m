@@ -24,14 +24,14 @@ public class Bech32mModuleTest {
     @Test
     public void CheckInvalidChecksumTest() {
         for (String test_vector : TestVectors.INVALID_BECH32M_CHECKSUM) {
-            assertThrows(Bech32mException.class, () -> module.decodeBech32mString(test_vector));
+            assertThrows(Bech32mException.class, () -> module.decodeBech32mString(test_vector, true));
         }
     }
 
     @Test
     public void DecodeValidStringsTest() {
         for (int i = 0; i < TestVectors.VALID_BECH32M.length; i++) {
-            assertEquals(module.decodeBech32mString(TestVectors.VALID_BECH32M[i]),
+            assertEquals(module.decodeBech32mString(TestVectors.VALID_BECH32M[i], true),
                     TestVectors.VALID_BECH32_DECODINGS[i]);
         }
     }
