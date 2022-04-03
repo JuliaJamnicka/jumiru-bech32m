@@ -12,7 +12,7 @@ public class UserInterfaceModule implements UserInterface{
     private final String[] args;
     private enum dataPartFormatEnum {BIN, HEX, BASE64}
     private dataPartFormatEnum dataFormat;
-    private enum IODestinationEnum {STDIN, ARG, FILE, STDOUT}
+    private enum IODestinationEnum {STDIN, ARG, EMPTYARG, FILE, STDOUT}
     private IODestinationEnum inputDestination;
     private IODestinationEnum outputDestination;
     private String inputFileName;
@@ -95,6 +95,9 @@ public class UserInterfaceModule implements UserInterface{
                 inputDestination = IODestinationEnum.ARG;
                 parseDataPart();
                 break;
+            case "emptyarg":
+                inputData = "";
+                break;
             case "file":
                 if (input)
                     inputDestination = IODestinationEnum.FILE;
@@ -141,7 +144,7 @@ public class UserInterfaceModule implements UserInterface{
 
     private void loadInputData() {
         if (inputDestination == IODestinationEnum.STDIN) {
-            System.out.println("Enter the data part to be encoded:");
+            System.out.println("Enter the data part to be en/decoded:");
             Scanner scanner = new Scanner(System.in);
             inputData = scanner.nextLine();
             scanner.close();
@@ -227,10 +230,9 @@ public class UserInterfaceModule implements UserInterface{
 
         switch (outputDestination) { //TODO put this into separate method
             case STDOUT:
-                System.out.println(result);
+                System.out.println("Decoded data part is: " + result);
                 break;
             case FILE:
-                String str = "Hello";
                 FileWriter fw;
                 try {
                      fw = new FileWriter(outputFileName);
@@ -240,7 +242,7 @@ public class UserInterfaceModule implements UserInterface{
                 }
                 BufferedWriter writer = new BufferedWriter(fw);
                 try {
-                    writer.write(str);
+                    writer.write(result);
                 } catch (IOException e) {
                     throw new UserInterfaceException("Writing into the output file failed for the" +
                             " following reason: " + e.getMessage());
@@ -251,6 +253,7 @@ public class UserInterfaceModule implements UserInterface{
                     throw new UserInterfaceException("The output file could not be closed for the" +
                             " following reason: " + e.getMessage());
                 }
+                System.out.println("File " + outputFileName + " was created successfully");
                 break;
         }
     }
