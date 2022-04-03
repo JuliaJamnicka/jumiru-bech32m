@@ -1,4 +1,4 @@
-package cz.fi.muni.pa193.jumiru;
+package cz.fi.muni.pa193.jumiru.converter;
 
 import java.util.ArrayList;
 import java.util.Base64;

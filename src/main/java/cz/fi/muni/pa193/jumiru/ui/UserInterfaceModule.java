@@ -1,6 +1,9 @@
 package cz.fi.muni.pa193.jumiru.ui;
 
-import cz.fi.muni.pa193.jumiru.*;
+import cz.fi.muni.pa193.jumiru.bech32m.Bech32mIOData;
+import cz.fi.muni.pa193.jumiru.bech32m.Bech32mModule;
+import cz.fi.muni.pa193.jumiru.converter.DataInputConverter;
+import cz.fi.muni.pa193.jumiru.converter.DataOutputConverter;
 
 import java.io.*;
 import java.util.List;

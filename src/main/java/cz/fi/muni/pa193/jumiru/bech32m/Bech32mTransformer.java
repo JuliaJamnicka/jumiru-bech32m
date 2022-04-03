@@ -1,4 +1,4 @@
-package cz.fi.muni.pa193.jumiru;
+package cz.fi.muni.pa193.jumiru.bech32m;
 
 import cz.fi.muni.pa193.jumiru.ui.Bech32mException;
 
