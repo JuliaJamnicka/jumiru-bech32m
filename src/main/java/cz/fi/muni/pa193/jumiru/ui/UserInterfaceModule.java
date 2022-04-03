@@ -10,150 +10,21 @@ import java.util.List;
 import java.util.Scanner;
 
 public class UserInterfaceModule implements UserInterface{
-    private boolean encode;
-    private int argIndex = 0;
-    private final String[] args;
-    private enum dataPartFormatEnum {BIN, HEX, BASE64}
-    private dataPartFormatEnum dataFormat;
-    private enum IODestinationEnum {STDIN, ARG, EMPTYARG, FILE, STDOUT}
-    private IODestinationEnum inputDestination;
-    private IODestinationEnum outputDestination;
-    private String inputFileName;
-    private String outputFileName;
-    private String humanReadablePart;
-    private String inputData;
-    private boolean errorDetection = false;
-
+    ArgParser argParser;
 
     public UserInterfaceModule(String[] args) {
-        this.args = args;
-    }
-
-    private void hasNextArg(String errorMsg) {
-        if (args.length <= argIndex) {
-            throw new UserInterfaceException(errorMsg);
-        }
-    }
-
-    private void parseEncodeDecode() {
-        hasNextArg("Encode/decode argument is missing");
-        switch (args[argIndex]) {
-            case "encode":
-                encode = true;
-                break;
-            case "decode":
-                encode = false;
-                break;
-            default:
-                throw new UserInterfaceException("Argument " + argIndex + " (" + args[argIndex] +
-                        ") must be encode/decode");
-        }
-        argIndex++;
-    }
-
-    private void parseDataFormat() {
-        hasNextArg("Data format specification argument (bin/hex/base64) is missing");
-        switch (args[argIndex]) {
-            case "bin":
-                dataFormat = dataPartFormatEnum.BIN;
-                break;
-            case "base64":
-                dataFormat = dataPartFormatEnum.BASE64;
-                break;
-            case "hex":
-                dataFormat = dataPartFormatEnum.HEX;
-                break;
-            default:
-                throw new UserInterfaceException("Argument " + argIndex + "(" + args[argIndex] +
-                        ") must be bin/base64/hex");
-        }
-        argIndex++;
-    }
-
-    private void parseFilename(boolean input) {
-        argIndex++;
-        if (input){
-            hasNextArg("FileName argument is missing");
-        }
-        if (input){
-            inputFileName = args[argIndex];
-        } else {
-            outputFileName = args[argIndex];
-        }
-    }
-
-    private void parseDataPart() {
-        argIndex++;
-        hasNextArg("Data part argument is missing");
-        inputData = args[argIndex];
-    }
-
-    private void parseIODestination(boolean input) {
-        hasNextArg("IO destination argument (stdin/file/arg/stdout) is missing");
-        switch (args[argIndex]) {
-            case "arg":
-                if (!input)
-                    throw new UserInterfaceException("Error in argument " + argIndex + "(" +
-                            args[argIndex] + "): arg cannot be selected as output destination");
-                inputDestination = IODestinationEnum.ARG;
-                parseDataPart();
-                break;
-            case "emptyarg":
-                inputData = "";
-                break;
-            case "file":
-                if (input)
-                    inputDestination = IODestinationEnum.FILE;
-                else
-                    outputDestination = IODestinationEnum.FILE;
-                parseFilename(input);
-                break;
-            case "stdin":
-                if (!input)
-                    throw new UserInterfaceException("Error in argument " + argIndex + "(" +
-                            args[argIndex] + "): stdin cannot be selected as output destination");
-                inputDestination = IODestinationEnum.STDIN;
-                break;
-            case "stdout":
-                if (input)
-                    throw new UserInterfaceException("Error in argument " + argIndex + "(" +
-                            args[argIndex] + "): stdout cannot be selected as input destination");
-                outputDestination = IODestinationEnum.STDOUT;
-                break;
-            default:
-                throw new UserInterfaceException("Argument " + argIndex + "(" + args[argIndex] +
-                        ") must be arg/stdin/file/stdout");
-        }
-        argIndex++;
-    }
-
-    private void parseHRP() {
-        hasNextArg("The HRP argument is missing");
-        humanReadablePart = args[argIndex];
-        argIndex++;
-    }
-
-    private void parseErrorDetection() {
-        if (args.length > argIndex) {
-            if  (args[argIndex].equals("errdetect")) {
-                errorDetection = true;
-                argIndex++;
-            } else {
-                throw new UserInterfaceException("The optional 'errdetect' argument expected and " +
-                        "instead, '" + args[argIndex] + "' was provided");
-            }
-        }
+        this.argParser = new ArgParser(args);
     }
 
     private void loadInputData() {
-        if (inputDestination == IODestinationEnum.STDIN) {
+        if (argParser.inputDestination == ArgParser.IODestinationEnum.STDIN) {
             System.out.println("Enter the data part to be en/decoded:");
             Scanner scanner = new Scanner(System.in);
-            inputData = scanner.nextLine();
+            argParser.inputData = scanner.nextLine();
             scanner.close();
         }
-        if (inputDestination == IODestinationEnum.FILE) {
-            File inputFile =  new File(inputFileName);
+        if (argParser.inputDestination == ArgParser.IODestinationEnum.FILE) {
+            File inputFile =  new File(argParser.inputFileName);
             if (!inputFile.isFile())
                 throw new UserInterfaceException("The provided input file does not exist");
             try {
@@ -164,7 +35,7 @@ public class UserInterfaceModule implements UserInterface{
                     throw new UserInterfaceException("Some data from file could not be read " +
                             "successfully");
                 fileInputStream.close();
-                inputData = new String(chars);
+                argParser.inputData = new String(chars);
             }
             catch (IOException e) {
                 throw new UserInterfaceException("The read from file failed due to the following " +
@@ -174,38 +45,28 @@ public class UserInterfaceModule implements UserInterface{
     }
 
     private void entryPoint() {
-        parseEncodeDecode();
-        parseDataFormat();
-        parseIODestination(true);
-        parseIODestination(false);
-        if (encode)
-            parseHRP();
-        if (!encode)
-            parseErrorDetection();
-        if (args.length > argIndex) {
-            throw new UserInterfaceException("Following argument " + args[argIndex-1] +
-                    ", there is one or more unnecessary arguments.");
-        }
-        loadInputData();
+        argParser.parse();
 
+        loadInputData();
         String result;
-        if (encode){
+        if (argParser.encode){
             //TODO put this into separate method
             Bech32mIOData bech32mIOData;
             DataInputConverter inputConverter = new DataInputConverter();
-            switch (dataFormat) {
+            switch (argParser.dataFormat) {
                 case HEX:
-                    bech32mIOData = new Bech32mIOData(humanReadablePart, inputData);
+                    bech32mIOData = new Bech32mIOData(argParser.humanReadablePart,
+                            argParser.inputData);
                     break;
                 case BIN:
                     String dataPartHex;
-                    dataPartHex = inputConverter.convertFromBinary(inputData);
-                    bech32mIOData = new Bech32mIOData(humanReadablePart, dataPartHex);
+                    dataPartHex = inputConverter.convertFromBinary(argParser.inputData);
+                    bech32mIOData = new Bech32mIOData(argParser.humanReadablePart, dataPartHex);
                     break;
                 case BASE64:
                     List<Byte> dataPartBytes;
-                    dataPartBytes = inputConverter.convertFromBase64(inputData);
-                    bech32mIOData = new Bech32mIOData(humanReadablePart, dataPartBytes);
+                    dataPartBytes = inputConverter.convertFromBase64(argParser.inputData);
+                    bech32mIOData = new Bech32mIOData(argParser.humanReadablePart, dataPartBytes);
                     break;
                 default:
                     throw new UserInterfaceException("Unsupported input type encountered while" +
@@ -213,9 +74,10 @@ public class UserInterfaceModule implements UserInterface{
             }
             result = new Bech32mModule().encodeBech32mString(bech32mIOData);
         } else {
-            Bech32mIOData bech32mIOData = new Bech32mModule().decodeBech32mString(inputData); //TODO add the error detection
+            Bech32mIOData bech32mIOData = new Bech32mModule()
+                    .decodeBech32mString(argParser.inputData); //TODO add the error detection
             DataOutputConverter outputConverter = new DataOutputConverter();
-            switch (dataFormat) {
+            switch (argParser.dataFormat) {
                 case HEX:
                     result = outputConverter.convertToHex(bech32mIOData);
                     break;
@@ -231,14 +93,14 @@ public class UserInterfaceModule implements UserInterface{
             }
         }
 
-        switch (outputDestination) { //TODO put this into separate method
+        switch (argParser.outputDestination) { //TODO put this into separate method
             case STDOUT:
                 System.out.println("Decoded data part is: " + result);
                 break;
             case FILE:
                 FileWriter fw;
                 try {
-                     fw = new FileWriter(outputFileName);
+                     fw = new FileWriter(argParser.outputFileName);
                 } catch (IOException e) {
                     throw new UserInterfaceException("The output file could not be created due " +
                             "to the following reason: " + e.getMessage());
@@ -256,7 +118,7 @@ public class UserInterfaceModule implements UserInterface{
                     throw new UserInterfaceException("The output file could not be closed for the" +
                             " following reason: " + e.getMessage());
                 }
-                System.out.println("File " + outputFileName + " was created successfully");
+                System.out.println("File " + argParser.outputFileName + " was created successfully");
                 break;
         }
     }
