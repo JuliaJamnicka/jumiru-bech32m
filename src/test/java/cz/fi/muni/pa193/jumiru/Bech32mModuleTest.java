@@ -1,5 +1,6 @@
 package cz.fi.muni.pa193.jumiru;
 
+import cz.fi.muni.pa193.jumiru.ui.Bech32mException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
