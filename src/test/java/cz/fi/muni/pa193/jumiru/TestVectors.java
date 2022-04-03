@@ -58,6 +58,9 @@ public class TestVectors {
             "au1s5cgom",         // Invalid character in checksum
             "16plkw9",           // Empty HRP
             "1p2gdwpf",          // Empty HRP
+            // additional test vectors
+            "lT1igcx5c0",        // Mixed case HRP
+            "abcdef1l7auM6echk45nj3s0wdvt2fg8x9yrzpqzd3ryx",  // Mixed case data part
     };
 
     public static final String[] INVALID_BECH32M_CHECKSUM = {
