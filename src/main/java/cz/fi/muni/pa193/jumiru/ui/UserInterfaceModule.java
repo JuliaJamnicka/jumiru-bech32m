@@ -180,13 +180,9 @@ public class UserInterfaceModule implements UserInterface{
             throw new UserInterfaceException("Following argument " + args[argIndex-1] +
                     ", there is one or more unnecessary arguments.");
         }
-
-        //get input data here - encode bude mít HRP string a data part co načtu, na tu použiju converter a z toho vytvořím novej Bech32 objekt nad kterým zavolám bech32
-        //                    - decode vezme bech32 string a na ten rovnou zavolám bech32 - takže input budou dva stringy pro encode a jeden string pro decode, ale já to vezmu vždy jako jeden a tu hrp použiju kdyžtak potom
         loadInputData();
 
         String result;
-
         if (encode){
             //TODO put this into separate method
             Bech32mIOData bech32mIOData;
@@ -232,6 +228,7 @@ public class UserInterfaceModule implements UserInterface{
         switch (outputDestination) { //TODO put this into separate method
             case STDOUT:
                 System.out.println(result);
+                break;
             case FILE:
                 String str = "Hello";
                 FileWriter fw;
@@ -254,6 +251,7 @@ public class UserInterfaceModule implements UserInterface{
                     throw new UserInterfaceException("The output file could not be closed for the" +
                             " following reason: " + e.getMessage());
                 }
+                break;
         }
     }
 
