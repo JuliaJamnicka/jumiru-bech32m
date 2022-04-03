@@ -23,7 +23,7 @@ public class Bech32mModuleTest {
 
     @Test
     public void CheckInvalidChecksumTest() {
-        for (String test_vector : TestVectors.INVALID_BECH32M) {
+        for (String test_vector : TestVectors.INVALID_BECH32M_CHECKSUM) {
             assertThrows(Bech32mException.class, () -> module.decodeBech32mString(test_vector));
         }
     }
