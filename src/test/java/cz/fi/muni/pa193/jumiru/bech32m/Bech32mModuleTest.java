@@ -24,15 +24,28 @@ public class Bech32mModuleTest {
 
     @Test
     public void CheckInvalidChecksumTest() {
-        for (String test_vector : TestVectors.INVALID_BECH32M) {
-            assertThrows(Bech32mException.class, () -> module.decodeBech32mString(test_vector));
+        for (String test_vector : TestVectors.INVALID_BECH32M_CHECKSUM) {
+            assertThrows(Bech32mInvalidChecksumException.class, () -> module
+                    .decodeBech32mString(test_vector, false));
+        }
+    }
+
+    @Test
+    public void ErrorCorrectionTest() {
+        for (int i = 0; i < TestVectors.INVALID_CORRECTS_TO_VALID_BECH32M.length; i++) {
+            int finalI = i;
+            Exception thrownException = assertThrows(Bech32mInvalidChecksumException.class, () -> module
+                    .decodeBech32mString(TestVectors.INVALID_CORRECTS_TO_VALID_BECH32M[finalI], true));
+            assertEquals("Invalid checksum. Error correction found these candidates for " +
+                    "corrected original string: \n" + TestVectors.VALID_BECH32M[finalI].toLowerCase(),
+                    thrownException.getMessage());
         }
     }
 
     @Test
     public void DecodeValidStringsTest() {
         for (int i = 0; i < TestVectors.VALID_BECH32M.length; i++) {
-            assertEquals(module.decodeBech32mString(TestVectors.VALID_BECH32M[i]),
+            assertEquals(module.decodeBech32mString(TestVectors.VALID_BECH32M[i], false),
                     TestVectors.VALID_BECH32_DECODINGS[i]);
         }
     }

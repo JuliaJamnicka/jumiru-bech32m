@@ -26,12 +26,16 @@ public interface Bech32mTransformer {
     boolean verifyChecksum(String hrPart, List<Byte> dataPart);
 
     /**
-     * Decode a Bech32m string.
+     * Decode a Bech32m string. If parameter performErrorCorrection is set to true and checksum
+     * verification of provided Bech32m string fails, function performs error correction - it provides
+     * candidates for provided string that differ from it in one symbol and pass checksum verification.
+     * They are specified as part of thrown Bech32mException.
      *
-     * @param  str  string to be decoded
-     * @return      content of decoded string as Bech32mIOData structure.
+     * @param  str                     string to be decoded
+     * @param  performErrorCorrection  specifies whether to perform error correction
+     * @return                         content of decoded string as Bech32mIOData structure.
      */
-    Bech32mIOData decodeBech32mString(String str);
+    Bech32mIOData decodeBech32mString(String str, boolean performErrorCorrection);
 
     /**
      * Encode input data to Bech32m string.
