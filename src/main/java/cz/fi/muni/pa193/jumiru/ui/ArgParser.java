@@ -21,7 +21,7 @@ public class ArgParser {
 
     private void hasNextArg(String errorMsg) {
         if (args.length <= argIndex) {
-            throw new UserInterface.UserInterfaceException(errorMsg);
+            throw new UserInterfaceException(errorMsg);
         }
     }
 
@@ -35,7 +35,7 @@ public class ArgParser {
                 encode = false;
                 break;
             default:
-                throw new UserInterface.UserInterfaceException("Argument " + argIndex + " (" + args[argIndex] +
+                throw new UserInterfaceException("Argument " + argIndex + " (" + args[argIndex] +
                         ") must be encode/decode");
         }
         argIndex++;
@@ -54,7 +54,7 @@ public class ArgParser {
                 dataFormat = dataPartFormatEnum.HEX;
                 break;
             default:
-                throw new UserInterface.UserInterfaceException("Argument " + argIndex + "(" + args[argIndex] +
+                throw new UserInterfaceException("Argument " + argIndex + "(" + args[argIndex] +
                         ") must be bin/base64/hex");
         }
         argIndex++;
@@ -83,7 +83,7 @@ public class ArgParser {
         switch (args[argIndex]) {
             case "arg":
                 if (!input)
-                    throw new UserInterface.UserInterfaceException("Error in argument " + argIndex + "(" +
+                    throw new UserInterfaceException("Error in argument " + argIndex + "(" +
                             args[argIndex] + "): arg cannot be selected as output destination");
                 inputDestination = IODestinationEnum.ARG;
                 parseDataPart();
@@ -100,18 +100,18 @@ public class ArgParser {
                 break;
             case "stdin":
                 if (!input)
-                    throw new UserInterface.UserInterfaceException("Error in argument " + argIndex + "(" +
+                    throw new UserInterfaceException("Error in argument " + argIndex + "(" +
                             args[argIndex] + "): stdin cannot be selected as output destination");
                 inputDestination = IODestinationEnum.STDIN;
                 break;
             case "stdout":
                 if (input)
-                    throw new UserInterface.UserInterfaceException("Error in argument " + argIndex + "(" +
+                    throw new UserInterfaceException("Error in argument " + argIndex + "(" +
                             args[argIndex] + "): stdout cannot be selected as input destination");
                 outputDestination = IODestinationEnum.STDOUT;
                 break;
             default:
-                throw new UserInterface.UserInterfaceException("Argument " + argIndex + "(" + args[argIndex] +
+                throw new UserInterfaceException("Argument " + argIndex + "(" + args[argIndex] +
                         ") must be arg/stdin/file/stdout");
         }
         argIndex++;
@@ -129,7 +129,7 @@ public class ArgParser {
                 errorDetection = true;
                 argIndex++;
             } else {
-                throw new UserInterface.UserInterfaceException("The optional 'errdetect' argument expected and " +
+                throw new UserInterfaceException("The optional 'errdetect' argument expected and " +
                         "instead, '" + args[argIndex] + "' was provided");
             }
         }
@@ -145,7 +145,7 @@ public class ArgParser {
         if (!encode)
             parseErrorDetection();
         if (args.length > argIndex) {
-            throw new UserInterface.UserInterfaceException("Following argument " + args[argIndex-1] +
+            throw new UserInterfaceException("Following argument " + args[argIndex-1] +
                     ", there is one or more unnecessary arguments.");
         }
     }

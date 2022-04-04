@@ -1,7 +1,5 @@
 package cz.fi.muni.pa193.jumiru.bech32m;
 
-import cz.fi.muni.pa193.jumiru.ui.Bech32mException;
-
 import java.util.ArrayList;
 import java.util.List;
 

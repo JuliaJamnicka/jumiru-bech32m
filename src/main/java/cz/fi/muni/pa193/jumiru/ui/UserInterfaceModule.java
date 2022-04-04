@@ -1,5 +1,6 @@
 package cz.fi.muni.pa193.jumiru.ui;
 
+import cz.fi.muni.pa193.jumiru.bech32m.Bech32mException;
 import cz.fi.muni.pa193.jumiru.bech32m.Bech32mIOData;
 import cz.fi.muni.pa193.jumiru.bech32m.Bech32mModule;
 import cz.fi.muni.pa193.jumiru.converter.DataInputConverter;
@@ -9,7 +10,7 @@ import java.io.*;
 import java.util.List;
 import java.util.Scanner;
 
-public class UserInterfaceModule implements UserInterface{
+public class UserInterfaceModule{
     ArgParser argParser;
 
     public UserInterfaceModule(String[] args) {
@@ -75,7 +76,7 @@ public class UserInterfaceModule implements UserInterface{
             result = new Bech32mModule().encodeBech32mString(bech32mIOData);
         } else {
             Bech32mIOData bech32mIOData = new Bech32mModule()
-                    .decodeBech32mString(argParser.inputData); //TODO add the error detection
+                    .decodeBech32mString(argParser.inputData, argParser.errorDetection); //TODO add the error detection
             DataOutputConverter outputConverter = new DataOutputConverter();
             switch (argParser.dataFormat) {
                 case HEX:
