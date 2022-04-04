@@ -1,4 +1,4 @@
-package cz.fi.muni.pa193.jumiru;
+package cz.fi.muni.pa193.jumiru.bech32m;
 
 import org.junit.jupiter.api.Test;
 

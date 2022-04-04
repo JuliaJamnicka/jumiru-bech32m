@@ -1,4 +1,6 @@
-package cz.fi.muni.pa193.jumiru;
+package cz.fi.muni.pa193.jumiru.bech32m;
+
+import cz.fi.muni.pa193.jumiru.bech32m.Bech32mIOData;
 
 public class TestVectors {
     public static final String[] VALID_BECH32M = {
