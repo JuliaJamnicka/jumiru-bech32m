@@ -45,83 +45,99 @@ public class UserInterfaceModule{
         }
     }
 
-    private void entryPoint() {
-        argParser.parse();
-
-        loadInputData();
-        String result;
-        if (argParser.encode){
-            //TODO put this into separate method
-            Bech32mIOData bech32mIOData;
-            DataInputConverter inputConverter = new DataInputConverter();
-            switch (argParser.dataFormat) {
-                case HEX:
-                    bech32mIOData = new Bech32mIOData(argParser.humanReadablePart,
-                            argParser.inputData);
-                    break;
-                case BIN:
-                    String dataPartHex;
-                    dataPartHex = inputConverter.convertFromBinary(argParser.inputData);
-                    bech32mIOData = new Bech32mIOData(argParser.humanReadablePart, dataPartHex);
-                    break;
-                case BASE64:
-                    List<Byte> dataPartBytes;
-                    dataPartBytes = inputConverter.convertFromBase64(argParser.inputData);
-                    bech32mIOData = new Bech32mIOData(argParser.humanReadablePart, dataPartBytes);
-                    break;
-                default:
-                    throw new UserInterfaceException("Unsupported input type encountered while" +
-                            " converting input data part");
-            }
-            result = new Bech32mModule().encodeBech32mString(bech32mIOData);
-        } else {
-            Bech32mIOData bech32mIOData = new Bech32mModule()
-                    .decodeBech32mString(argParser.inputData, argParser.errorDetection); //TODO add the error detection
-            DataOutputConverter outputConverter = new DataOutputConverter();
-            switch (argParser.dataFormat) {
-                case HEX:
-                    result = outputConverter.convertToHex(bech32mIOData);
-                    break;
-                case BIN:
-                    result = outputConverter.convertToBinary(bech32mIOData);
-                    break;
-                case BASE64:
-                    result = outputConverter.convertToBase64(bech32mIOData);
-                    break;
-                default:
-                    throw new UserInterfaceException("Unsupported output type encountered while" +
-                            " converting output data");
-            }
+    private Bech32mIOData convertFormatEncode(){
+        Bech32mIOData bech32mIOData;
+        DataInputConverter inputConverter = new DataInputConverter();
+        switch (argParser.dataFormat) {
+            case HEX:
+                bech32mIOData = new Bech32mIOData(argParser.humanReadablePart,
+                        argParser.inputData);
+                break;
+            case BIN:
+                String dataPartHex;
+                dataPartHex = inputConverter.convertFromBinary(argParser.inputData);
+                bech32mIOData = new Bech32mIOData(argParser.humanReadablePart, dataPartHex);
+                break;
+            case BASE64:
+                List<Byte> dataPartBytes;
+                dataPartBytes = inputConverter.convertFromBase64(argParser.inputData);
+                bech32mIOData = new Bech32mIOData(argParser.humanReadablePart, dataPartBytes);
+                break;
+            default:
+                throw new UserInterfaceException("Unsupported input type encountered while" +
+                        " converting input data part");
         }
+        return bech32mIOData;
+    }
 
-        switch (argParser.outputDestination) { //TODO put this into separate method
+    private String convertFormatDecode(Bech32mIOData bech32mIOData){
+        String result;
+        DataOutputConverter outputConverter = new DataOutputConverter();
+        switch (argParser.dataFormat) {
+            case HEX:
+                result = outputConverter.convertToHex(bech32mIOData);
+                break;
+            case BIN:
+                result = outputConverter.convertToBinary(bech32mIOData);
+                break;
+            case BASE64:
+                result = outputConverter.convertToBase64(bech32mIOData);
+                break;
+            default:
+                throw new UserInterfaceException("Unsupported output type encountered while" +
+                        " converting output data");
+        }
+        return result;
+    }
+
+    private void fileWriteResult(String result){
+        FileWriter fw;
+        try {
+            fw = new FileWriter(argParser.outputFileName);
+        } catch (IOException e) {
+            throw new UserInterfaceException("The output file could not be created due " +
+                    "to the following reason: " + e.getMessage());
+        }
+        BufferedWriter writer = new BufferedWriter(fw);
+        try {
+            writer.write(result);
+        } catch (IOException e) {
+            throw new UserInterfaceException("Writing into the output file failed for the" +
+                    " following reason: " + e.getMessage());
+        }
+        try {
+            writer.close();
+        } catch (IOException e) {
+            throw new UserInterfaceException("The output file could not be closed for the" +
+                    " following reason: " + e.getMessage());
+        }
+        System.out.println("File " + argParser.outputFileName + " was created successfully");
+    }
+
+    private void outputResult(String result){
+        switch (argParser.outputDestination) {
             case STDOUT:
                 System.out.println("Decoded data part is: " + result);
                 break;
             case FILE:
-                FileWriter fw;
-                try {
-                     fw = new FileWriter(argParser.outputFileName);
-                } catch (IOException e) {
-                    throw new UserInterfaceException("The output file could not be created due " +
-                            "to the following reason: " + e.getMessage());
-                }
-                BufferedWriter writer = new BufferedWriter(fw);
-                try {
-                    writer.write(result);
-                } catch (IOException e) {
-                    throw new UserInterfaceException("Writing into the output file failed for the" +
-                            " following reason: " + e.getMessage());
-                }
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    throw new UserInterfaceException("The output file could not be closed for the" +
-                            " following reason: " + e.getMessage());
-                }
-                System.out.println("File " + argParser.outputFileName + " was created successfully");
+                fileWriteResult(result);
                 break;
         }
+    }
+
+    private void entryPoint() {
+        argParser.parse();
+        loadInputData();
+        String result;
+        if (argParser.encode){
+            Bech32mIOData bech32mIOData = convertFormatEncode();
+            result = new Bech32mModule().encodeBech32mString(bech32mIOData);
+        } else {
+            Bech32mIOData bech32mIOData = new Bech32mModule().decodeBech32mString(
+                    argParser.inputData, argParser.errorDetection);
+            result = convertFormatDecode(bech32mIOData);
+        }
+        outputResult(result);
     }
 
     public void entryPointWrapper() {
