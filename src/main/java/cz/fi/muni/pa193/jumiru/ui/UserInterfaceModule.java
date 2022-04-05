@@ -98,14 +98,14 @@ public class UserInterfaceModule{
         return result;
     }
 
-    private void fileWriteResult(String result){
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(argParser.outputFileName))) {
+    private void fileWriteResult(String outputFileName, String result){
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName))) {
             writer.write(result);
         } catch (IOException e) {
             throw new UserInterfaceException("Writing into the output file failed for the" +
                     " following reason: " + e.getMessage());
         }
-        System.out.println("File " + argParser.outputFileName + " was created successfully");
+        System.out.println("File " + outputFileName + " was created successfully");
     }
 
     private void outputResult(String result){
@@ -114,7 +114,7 @@ public class UserInterfaceModule{
                 System.out.println("Decoded data part is: " + result);
                 break;
             case FILE:
-                fileWriteResult(result);
+                fileWriteResult(argParser.outputFileName, result);
                 break;
         }
     }
