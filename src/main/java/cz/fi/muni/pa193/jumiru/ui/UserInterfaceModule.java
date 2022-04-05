@@ -99,24 +99,10 @@ public class UserInterfaceModule{
     }
 
     private void fileWriteResult(String result){
-        FileWriter fw;
-        try {
-            fw = new FileWriter(argParser.outputFileName);
-        } catch (IOException e) {
-            throw new UserInterfaceException("The output file could not be created due " +
-                    "to the following reason: " + e.getMessage());
-        }
-        BufferedWriter writer = new BufferedWriter(fw);
-        try {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(argParser.outputFileName))) {
             writer.write(result);
         } catch (IOException e) {
             throw new UserInterfaceException("Writing into the output file failed for the" +
-                    " following reason: " + e.getMessage());
-        }
-        try {
-            writer.close();
-        } catch (IOException e) {
-            throw new UserInterfaceException("The output file could not be closed for the" +
                     " following reason: " + e.getMessage());
         }
         System.out.println("File " + argParser.outputFileName + " was created successfully");
