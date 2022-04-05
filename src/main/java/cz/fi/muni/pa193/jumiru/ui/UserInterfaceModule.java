@@ -42,34 +42,35 @@ public class UserInterfaceModule{
     }
 
     private void loadInputData() {
-        if (argParser.inputDestination == ArgParser.IODestinationEnum.STDIN) {
-            System.out.println("Enter the data part to be en/decoded:");
-            Scanner scanner = new Scanner(System.in);
-            argParser.inputData = scanner.nextLine();
-            scanner.close();
-        }
-        if (argParser.inputDestination == ArgParser.IODestinationEnum.FILE) {
-            argParser.inputData = readDataFromFile(argParser.inputFileName);
+        switch (argParser.getInputDestination()) {
+            case STDIN:
+                System.out.println("Enter the data part to be en/decoded:");
+                Scanner scanner = new Scanner(System.in);
+                argParser.setInputData(scanner.nextLine());
+                scanner.close();
+                break;
+            case FILE:
+                argParser.setInputData(readDataFromFile(argParser.getInputFileName()));
         }
     }
 
     private Bech32mIOData convertFormatEncode(){
         Bech32mIOData bech32mIOData;
         DataInputConverter inputConverter = new DataInputConverter();
-        switch (argParser.dataFormat) {
+        switch (argParser.getDataFormat()) {
             case HEX:
-                bech32mIOData = new Bech32mIOData(argParser.humanReadablePart,
-                        argParser.inputData);
+                bech32mIOData = new Bech32mIOData(argParser.getHumanReadablePart(),
+                        argParser.getInputData());
                 break;
             case BIN:
                 String dataPartHex;
-                dataPartHex = inputConverter.convertFromBinary(argParser.inputData);
-                bech32mIOData = new Bech32mIOData(argParser.humanReadablePart, dataPartHex);
+                dataPartHex = inputConverter.convertFromBinary(argParser.getInputData());
+                bech32mIOData = new Bech32mIOData(argParser.getHumanReadablePart(), dataPartHex);
                 break;
             case BASE64:
                 List<Byte> dataPartBytes;
-                dataPartBytes = inputConverter.convertFromBase64(argParser.inputData);
-                bech32mIOData = new Bech32mIOData(argParser.humanReadablePart, dataPartBytes);
+                dataPartBytes = inputConverter.convertFromBase64(argParser.getInputData());
+                bech32mIOData = new Bech32mIOData(argParser.getHumanReadablePart(), dataPartBytes);
                 break;
             default:
                 throw new UserInterfaceException("Unsupported input type encountered while" +
@@ -81,7 +82,7 @@ public class UserInterfaceModule{
     private String convertFormatDecode(Bech32mIOData bech32mIOData){
         String result;
         DataOutputConverter outputConverter = new DataOutputConverter();
-        switch (argParser.dataFormat) {
+        switch (argParser.getDataFormat()) {
             case HEX:
                 result = outputConverter.convertToHex(bech32mIOData);
                 break;
@@ -109,12 +110,12 @@ public class UserInterfaceModule{
     }
 
     private void outputResult(String result){
-        switch (argParser.outputDestination) {
+        switch (argParser.getOutputDestination()) {
             case STDOUT:
                 System.out.println("Decoded data part is: " + result);
                 break;
             case FILE:
-                fileWriteResult(argParser.outputFileName, result);
+                fileWriteResult(argParser.getOutputFileName(), result);
                 break;
         }
     }
@@ -123,12 +124,12 @@ public class UserInterfaceModule{
         argParser.parse();
         loadInputData();
         String result;
-        if (argParser.encode){
+        if (argParser.isEncode()){
             Bech32mIOData bech32mIOData = convertFormatEncode();
             result = new Bech32mModule().encodeBech32mString(bech32mIOData);
         } else {
             Bech32mIOData bech32mIOData = new Bech32mModule().decodeBech32mString(
-                    argParser.inputData, argParser.errorDetection);
+                    argParser.getInputData(), argParser.isErrorDetection());
             result = convertFormatDecode(bech32mIOData);
         }
         outputResult(result);

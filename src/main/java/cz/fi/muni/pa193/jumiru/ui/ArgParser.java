@@ -3,20 +3,60 @@ package cz.fi.muni.pa193.jumiru.ui;
 public class ArgParser {
     private final String[] args;
     private int argIndex = 0;
-    protected boolean encode;
-    protected enum dataPartFormatEnum {BIN, HEX, BASE64}
-    protected dataPartFormatEnum dataFormat;
-    protected enum IODestinationEnum {STDIN, ARG, EMPTYARG, FILE, STDOUT}
-    protected IODestinationEnum inputDestination;
-    protected IODestinationEnum outputDestination;
-    protected String inputFileName;
-    protected String outputFileName;
-    protected String humanReadablePart;
-    protected String inputData;
-    protected boolean errorDetection = false;
+    private boolean encode;
+    enum dataPartFormatEnum {BIN, HEX, BASE64}
+    private dataPartFormatEnum dataFormat;
+    enum IODestinationEnum {STDIN, ARG, EMPTYARG, FILE, STDOUT}
+    private IODestinationEnum inputDestination;
+    private IODestinationEnum outputDestination;
+    private String inputFileName;
+    private String outputFileName;
+    private String humanReadablePart;
+    private String inputData;
+    private boolean errorDetection = false;
 
     public ArgParser(String[] args) {
         this.args = args;
+    }
+
+    public boolean isEncode() {
+        return encode;
+    }
+
+    public dataPartFormatEnum getDataFormat() {
+        return dataFormat;
+    }
+
+    public IODestinationEnum getInputDestination() {
+        return inputDestination;
+    }
+
+    public IODestinationEnum getOutputDestination() {
+        return outputDestination;
+    }
+
+    public String getInputFileName() {
+        return inputFileName;
+    }
+
+    public String getOutputFileName() {
+        return outputFileName;
+    }
+
+    public String getHumanReadablePart() {
+        return humanReadablePart;
+    }
+
+    public String getInputData() {
+        return inputData;
+    }
+
+    public void setInputData(String inputData) {
+        this.inputData = inputData;
+    }
+
+    public boolean isErrorDetection() {
+        return errorDetection;
     }
 
     private void hasNextArg(String errorMsg) {
@@ -149,4 +189,6 @@ public class ArgParser {
                     ", there is one or more unnecessary arguments.");
         }
     }
+
+
 }
