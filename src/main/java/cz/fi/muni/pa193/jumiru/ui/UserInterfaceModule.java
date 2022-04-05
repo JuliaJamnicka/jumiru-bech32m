@@ -10,11 +10,35 @@ import java.io.*;
 import java.util.List;
 import java.util.Scanner;
 
+
+
 public class UserInterfaceModule{
     ArgParser argParser;
+    final int MAX_FILE_SIZE = 704; //The biggest possible legitimate file here is the one where it
+                                    // represents the data part in binary format (8 bits per byte).
+                                    // The longest data part can be is 88 characters long -> 8*88.
 
     public UserInterfaceModule(String[] args) {
         this.argParser = new ArgParser(args);
+    }
+
+    private String readDataFromFile(String filename){
+        File inputFile =  new File(filename);
+        if (!inputFile.isFile())
+            throw new UserInterfaceException("The provided input file does not exist");
+        try (FileInputStream fileInputStream = new FileInputStream(inputFile)) {
+            byte[] chars = new byte[(int) inputFile.length()];
+            int readBytes = fileInputStream.read(chars);
+            if (readBytes != (int) inputFile.length())
+                throw new UserInterfaceException("Some data from file could not be read " +
+                        "successfully");
+            fileInputStream.close();
+            return new String(chars);
+        }
+        catch (IOException e) {
+            throw new UserInterfaceException("The read from file failed due to the following " +
+                    "reason: " + e.getMessage());
+        }
     }
 
     private void loadInputData() {
@@ -25,23 +49,7 @@ public class UserInterfaceModule{
             scanner.close();
         }
         if (argParser.inputDestination == ArgParser.IODestinationEnum.FILE) {
-            File inputFile =  new File(argParser.inputFileName);
-            if (!inputFile.isFile())
-                throw new UserInterfaceException("The provided input file does not exist");
-            try {
-                FileInputStream fileInputStream = new FileInputStream(inputFile);
-                byte[] chars = new byte[(int) inputFile.length()];
-                int readBytes = fileInputStream.read(chars);
-                if (readBytes != (int) inputFile.length())
-                    throw new UserInterfaceException("Some data from file could not be read " +
-                            "successfully");
-                fileInputStream.close();
-                argParser.inputData = new String(chars);
-            }
-            catch (IOException e) {
-                throw new UserInterfaceException("The read from file failed due to the following " +
-                        "reason: " + e.getMessage());
-            }
+            argParser.inputData = readDataFromFile(argParser.inputFileName);
         }
     }
 
