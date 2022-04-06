@@ -63,12 +63,11 @@ public class UserInterfaceModule{
                         argParser.getInputData());
                 break;
             case BIN:
-                String dataPartHex;
-                dataPartHex = inputConverter.convertFromBinary(argParser.getInputData());
-                bech32mIOData = new Bech32mIOData(argParser.getHumanReadablePart(), dataPartHex);
+                List<Byte> dataPartBytes;
+                dataPartBytes = inputConverter.convertFromBinary(argParser.getInputData());
+                bech32mIOData = new Bech32mIOData(argParser.getHumanReadablePart(), dataPartBytes);
                 break;
             case BASE64:
-                List<Byte> dataPartBytes;
                 dataPartBytes = inputConverter.convertFromBase64(argParser.getInputData());
                 bech32mIOData = new Bech32mIOData(argParser.getHumanReadablePart(), dataPartBytes);
                 break;
