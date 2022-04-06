@@ -1,23 +1,28 @@
-package cz.fi.muni.pa193.jumiru;
+package cz.fi.muni.pa193.jumiru.converter;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+import cz.fi.muni.pa193.jumiru.bech32m.Bech32mIOData;
+import cz.fi.muni.pa193.jumiru.converter.DataInputConverter;
+import cz.fi.muni.pa193.jumiru.converter.DataOutputConverter;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.stream.Stream;
 
 
-public class Bech32mOutputConverterTest {
-    private static final DataOutputConverter converter = new DataOutputConverter();
+public class Bech32mInputConverterTest {
+    private static final DataInputConverter converter = new DataInputConverter();
+    private static final DataOutputConverter outputConverter = new DataOutputConverter();
 
     @ParameterizedTest
     @MethodSource("provideBinParams")
-    public void CheckValidBinaryConversion(String hex, String expectedBin) {
-        Bech32mIOData data = new Bech32mIOData("", hex);
-        assertEquals(converter.convertToBinary(data), expectedBin);
+    public void CheckValidFromBinConversion(String hex, String bin) {
+        List<Byte> byteArray = converter.convertFromBinary(bin);
+        Bech32mIOData data = new Bech32mIOData("", byteArray);
+        assertEquals(hex, outputConverter.convertToHex(data));
     }
 
     private static Stream<Arguments> provideBinParams() {
@@ -51,22 +56,19 @@ public class Bech32mOutputConverterTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-        "1f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100",
-        "18171918161c01100b1d0819171d130d10171d16191c01100b03191d1b1903031d130b190303190d181d01190303190d",
-        "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f" + 
-        "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f"
-    })
-    public void CheckValidHexConversion(String hex) {
-        Bech32mIOData data = new Bech32mIOData("", hex);
-        assertEquals(hex, converter.convertToHex(data));
+    @MethodSource("provideBinParams")
+    public void CheckValidFromHexConversion(String hex, String __) {
+        List<Byte> byteArray = converter.convertFromHex(hex);
+        Bech32mIOData data = new Bech32mIOData("", byteArray);
+        assertEquals(hex, outputConverter.convertToHex(data));
     }
 
     @ParameterizedTest
     @MethodSource("provideBase64Params")
-    public void CheckValidBase64Conversion(String hex, String base64String) {
-        Bech32mIOData data = new Bech32mIOData("", hex);
-        assertEquals(base64String, converter.convertToBase64(data));
+    public void CheckValidFromBase64Conversion(String hex, String base64string) {
+        List<Byte> byteArray = converter.convertFromBase64(base64string);
+        Bech32mIOData data = new Bech32mIOData("", byteArray);
+        assertEquals(hex, outputConverter.convertToHex(data));
     }
 
     private static Stream<Arguments> provideBase64Params() {
@@ -84,4 +86,5 @@ public class Bech32mOutputConverterTest {
         );
     }
 
+    
 }

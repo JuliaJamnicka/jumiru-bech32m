@@ -1,4 +1,4 @@
-package cz.fi.muni.pa193.jumiru;
+package cz.fi.muni.pa193.jumiru.bech32m;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +102,7 @@ public final class Bech32mModule implements Bech32mTransformer {
                 "decode: Data part too short");
     }
 
-    public Bech32mIOData decodeBech32mString(String str) {
+    public Bech32mIOData decodeBech32mString(String str, boolean performErrorCorrection) {
         checkBech32mString(str);
 
         int separatorPos = str.lastIndexOf('1');
@@ -110,15 +110,58 @@ public final class Bech32mModule implements Bech32mTransformer {
         String hrPart = str.substring(0, separatorPos).toLowerCase();
         List<Byte> data = decodeDataPart(str.substring(separatorPos + 1));
 
-        if (!verifyChecksum(hrPart, data)) throw new Bech32mException("Invalid checksum");
+        if (!verifyChecksum(hrPart, data)) {
+            if (!performErrorCorrection) {
+                throw new Bech32mInvalidChecksumException();
+            } else {
+                throw new Bech32mInvalidChecksumException(findPossibleErrorCorrections(hrPart, data));
+            }
+        }
 
         return new Bech32mIOData(hrPart, data.subList(0, data.size() - 6));
     }
 
+    private List<String> findPossibleErrorCorrections(String hrPart, List<Byte> data) {
+        List<String> candidates = new ArrayList<>();
+
+        List<Byte> dataPart = new ArrayList<>(data);
+        for (int i = 0; i < dataPart.size() - 6; i++) {
+            byte originalValue = dataPart.get(i);
+            for (byte replacement = 0; replacement < 32; replacement++) {
+                if (replacement == originalValue) {
+                    continue;
+                }
+                dataPart.set(i, replacement);
+                if (verifyChecksum(hrPart, dataPart)) {
+                    candidates.add(encodeBech32mString(new Bech32mIOData(hrPart,
+                            new ArrayList<>(dataPart.subList(0, dataPart.size() - 6)))));
+                }
+            }
+            dataPart.set(i, originalValue);
+        }
+
+        StringBuilder hrPartMutable = new StringBuilder(hrPart);
+        for (int i = 0; i < hrPartMutable.length(); i++) {
+            char originalValue = hrPartMutable.charAt(i);
+            for (char replacement = 33; replacement < 127; replacement++) {
+                if (replacement == originalValue || (replacement >= 65 && replacement <= 90)) {
+                    continue;
+                }
+                hrPartMutable.setCharAt(i, replacement);
+                if (verifyChecksum(hrPartMutable.toString(), data)) {
+                    candidates.add(encodeBech32mString(new Bech32mIOData(hrPartMutable.toString(),
+                            new ArrayList<>(data.subList(0, data.size() - 6)))));
+                }
+            }
+            hrPartMutable.setCharAt(i, originalValue);
+        }
+
+        return candidates;
+    }
+
     @Override
     public String encodeBech32mString(Bech32mIOData input) {
-        String hrPart = input.getHrPart();
-        if (!hrPart.equals(hrPart.toLowerCase())) throw new IllegalArgumentException();
+        String hrPart = input.getHrPart().toLowerCase();
 
         StringBuilder output = new StringBuilder(hrPart);
         output.append('1');

@@ -1,4 +1,6 @@
-package cz.fi.muni.pa193.jumiru;
+package cz.fi.muni.pa193.jumiru.converter;
+
+import cz.fi.muni.pa193.jumiru.bech32m.Bech32mIOData;
 
 import java.util.function.IntFunction;
 import java.util.Base64;
