@@ -12,10 +12,45 @@ public class DataInputConverter implements InputConverter {
         return "0".repeat(zeroes_to_add % n) + input;
     }
 
+    private List<Byte> convertBits(List<Byte> bytes) {
+        List<Byte> convertedBytes = new ArrayList<>();
+
+        int fromBits = 8;
+        int toBits = 5;
+
+        int acc = 0;
+        int bits = 0;
+
+        int maxValue = (1 << toBits) - 1;
+        int maxAcc = (1 << (fromBits + toBits - 1)) - 1;
+
+        for (Byte b : bytes) {
+            if ((int) b < 0) {
+                throw new DataInputException(bytes.toString()); //this is ugly
+            }
+
+            acc = ((acc << fromBits) | b) & maxAcc;
+            bits += fromBits;
+
+            while (bits >= toBits) {
+                bits -= toBits;
+                convertedBytes.add((byte) ((acc >> bits) & maxValue));
+            }
+
+        }
+
+        if (bits != 0) {
+            convertedBytes.add((byte) ((acc << (toBits - bits)) & maxValue));
+        }
+
+        return convertedBytes;
+    }
+
+
     public List<Byte> convertFromBinary(String bech32mDataInput) {
         String data = padZerosToString(bech32mDataInput, 8);
 
-        List<Byte> byteArray = new ArrayList<Byte>();
+        List<Byte> byteArray = new ArrayList<>();
 
         try {
             for (int i = 0; i < data.length(); i += 8) {
@@ -25,13 +60,13 @@ public class DataInputConverter implements InputConverter {
             throw new DataInputException(bech32mDataInput);
         }
 
-        return byteArray;
+        return convertBits(byteArray);
     }
 
     public List<Byte> convertFromHex(String bech32mDataInput) {
         String data = padZerosToString(bech32mDataInput, 2);
 
-        List<Byte> byteArray = new ArrayList<Byte>();
+        List<Byte> byteArray = new ArrayList<>();
 
         try {
             for (int i = 0; i < data.length(); i += 2) {
@@ -42,7 +77,7 @@ public class DataInputConverter implements InputConverter {
             throw new DataInputException(bech32mDataInput);
         }
 
-        return byteArray;
+        return convertBits(byteArray);
     }
 
     public List<Byte> convertFromBase64(String bech32mDataInput) {
@@ -53,12 +88,13 @@ public class DataInputConverter implements InputConverter {
         } catch (IllegalArgumentException e) {
             throw new DataInputException(bech32mDataInput);
         }
-        List<Byte> bytes = new ArrayList<Byte>();
+        List<Byte> bytes = new ArrayList<>();
 
         for (byte b : decoded) {
             bytes.add(b);
         }
-        return bytes;
+
+        return convertBits(bytes);
     }
     
 }
