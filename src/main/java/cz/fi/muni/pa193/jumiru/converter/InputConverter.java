@@ -10,7 +10,7 @@ public interface InputConverter {
      *
      * @param  bech32mDataInput     string to convert
      * @return                      the data part converted to a list of bytes
-     * @throws NumberFormatException if the input cannot be converted
+     * @throws DataInputException if the input cannot be converted
      */
     List<Byte> convertFromBinary(String bech32mDataInput);
 
@@ -21,7 +21,7 @@ public interface InputConverter {
      *
      * @param  bech32mDataInput     string to convert
      * @return                      the data part converted to a list of bytes
-     * @throws NumberFormatException if the input cannot be converted
+     * @throws DataInputException if the input cannot be converted
      */
     List<Byte> convertFromHex(String bech32mDataInput);
 
@@ -32,7 +32,7 @@ public interface InputConverter {
      *
      * @param  bech32mDataInput     string to convert
      * @return                      the data part converted to a list of bytes
-     * @throws NumberFormatException if the input cannot be converted
+     * @throws DataInputException if the input cannot be converted
      */
     List<Byte> convertFromBase64(String bech32mDataInput);
 

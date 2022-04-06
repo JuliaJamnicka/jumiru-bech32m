@@ -17,8 +17,12 @@ public class DataInputConverter implements InputConverter {
 
         List<Byte> byteArray = new ArrayList<Byte>();
 
-        for (int i = 0; i < data.length(); i += 8) {
-            byteArray.add(Byte.parseByte(data.substring(i, i + 8), 2));
+        try {
+            for (int i = 0; i < data.length(); i += 8) {
+                byteArray.add(Byte.parseByte(data.substring(i, i + 8), 2));
+            }
+        } catch (NumberFormatException e) {
+            throw new DataInputException(bech32mDataInput);
         }
 
         return byteArray;
@@ -29,16 +33,26 @@ public class DataInputConverter implements InputConverter {
 
         List<Byte> byteArray = new ArrayList<Byte>();
 
-        for (int i = 0; i < data.length(); i += 2) {
-            int decimal = Integer.parseInt(data.substring(i, i + 2), 16);
-            byteArray.add((byte) decimal);
+        try {
+            for (int i = 0; i < data.length(); i += 2) {
+                int decimal = Integer.parseInt(data.substring(i, i + 2), 16);
+                byteArray.add((byte) decimal);
+            }
+        } catch(NumberFormatException e) {
+            throw new DataInputException(bech32mDataInput);
         }
 
         return byteArray;
     }
 
     public List<Byte> convertFromBase64(String bech32mDataInput) {
-        byte[] decoded = Base64.getDecoder().decode(bech32mDataInput);
+        byte[] decoded;
+
+        try {
+            decoded = Base64.getDecoder().decode(bech32mDataInput);
+        } catch (IllegalArgumentException e) {
+            throw new DataInputException(bech32mDataInput);
+        }
         List<Byte> bytes = new ArrayList<Byte>();
 
         for (byte b : decoded) {
