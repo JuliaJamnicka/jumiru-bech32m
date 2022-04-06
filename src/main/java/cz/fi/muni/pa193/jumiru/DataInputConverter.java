@@ -12,18 +12,29 @@ public class DataInputConverter implements InputConverter {
         return "0".repeat(zeroes_to_add % n) + input;
     }
 
-    public String convertFromBinary(String bech32mDataInput) {
+    public List<Byte> convertFromBinary(String bech32mDataInput) {
         String data = padZerosToString(bech32mDataInput, 8);
 
-        StringBuilder hexBuilder = new StringBuilder();
+        List<Byte> byteArray = new ArrayList<Byte>();
 
         for (int i = 0; i < data.length(); i += 8) {
-            int decimal = Integer.parseInt(data.substring(i, i + 8), 2);
-            String hex = String.format("%2s", Integer.toString(decimal, 16)).replace(' ', '0');
-            hexBuilder.append(hex);
+            byteArray.add(Byte.parseByte(data.substring(i, i + 8), 2));
         }
 
-        return hexBuilder.toString();
+        return byteArray;
+    }
+
+    public List<Byte> convertFromHex(String bech32mDataInput) {
+        String data = padZerosToString(bech32mDataInput, 2);
+
+        List<Byte> byteArray = new ArrayList<Byte>();
+
+        for (int i = 0; i < data.length(); i += 2) {
+            int decimal = Integer.parseInt(data.substring(i, i + 2), 16);
+            byteArray.add((byte) decimal);
+        }
+
+        return byteArray;
     }
 
     public List<Byte> convertFromBase64(String bech32mDataInput) {
@@ -31,7 +42,7 @@ public class DataInputConverter implements InputConverter {
         List<Byte> bytes = new ArrayList<Byte>();
 
         for (byte b : decoded) {
-            bytes.add(Byte.valueOf(b));
+            bytes.add(b);
         }
         return bytes;
     }

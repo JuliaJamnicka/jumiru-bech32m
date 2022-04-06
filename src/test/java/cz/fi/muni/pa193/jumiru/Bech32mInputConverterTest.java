@@ -12,12 +12,14 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 public class Bech32mInputConverterTest {
     private static final DataInputConverter converter = new DataInputConverter();
-    private static final DataOutputConverter ouputConverter = new DataOutputConverter();
+    private static final DataOutputConverter outputConverter = new DataOutputConverter();
 
     @ParameterizedTest
     @MethodSource("provideBinParams")
     public void CheckValidFromBinConversion(String hex, String bin) {
-        assertEquals(hex, converter.convertFromBinary(bin));
+        List<Byte> byteArray = converter.convertFromBinary(bin);
+        Bech32mIOData data = new Bech32mIOData("", byteArray);
+        assertEquals(hex, outputConverter.convertToHex(data));
     }
 
     private static Stream<Arguments> provideBinParams() {
@@ -51,11 +53,19 @@ public class Bech32mInputConverterTest {
     }
 
     @ParameterizedTest
+    @MethodSource("provideBinParams")
+    public void CheckValidFromHexConversion(String hex, String __) {
+        List<Byte> byteArray = converter.convertFromHex(hex);
+        Bech32mIOData data = new Bech32mIOData("", byteArray);
+        assertEquals(hex, outputConverter.convertToHex(data));
+    }
+
+    @ParameterizedTest
     @MethodSource("provideBase64Params")
     public void CheckValidFromBase64Conversion(String hex, String base64string) {
         List<Byte> byteArray = converter.convertFromBase64(base64string);
         Bech32mIOData data = new Bech32mIOData("", byteArray);
-        assertEquals(hex, ouputConverter.convertToHex(data));
+        assertEquals(hex, outputConverter.convertToHex(data));
     }
 
     private static Stream<Arguments> provideBase64Params() {
