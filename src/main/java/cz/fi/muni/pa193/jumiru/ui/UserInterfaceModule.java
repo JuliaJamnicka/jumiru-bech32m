@@ -10,13 +10,11 @@ import java.io.*;
 import java.util.List;
 import java.util.Scanner;
 
+import static cz.fi.muni.pa193.jumiru.bech32m.Bech32mModule.BENCH32M_MAX_LENGTH;
 
 
 public class UserInterfaceModule{
     ArgParser argParser;
-    final int MAX_FILE_SIZE = 704; //The biggest possible legitimate file here is the one where it
-                                    // represents the data part in binary format (8 bits per byte).
-                                    // The longest data part can be is 88 characters long -> 8*88.
 
     public UserInterfaceModule(String[] args) {
         this.argParser = new ArgParser(args);
@@ -26,13 +24,22 @@ public class UserInterfaceModule{
         File inputFile =  new File(filename);
         if (!inputFile.isFile())
             throw new UserInterfaceException("The provided input file does not exist");
+        /*
+            The biggest possible legitimate file here should always be the data part in its binary
+            form. This is binary data in regular text file, so each symbol 1/0 is 8 bytes and the
+            maximal amount of them is the maximal bech32m length -1 for smallest possible HRP and
+            -1 for the separator.
+         */
+        int binaryDataPartMaxLength = (BENCH32M_MAX_LENGTH-2)*8;
+        if (inputFile.length() > binaryDataPartMaxLength){
+            throw new UserInterfaceException("The file exceeds maximal allowed length");
+        }
         try (FileInputStream fileInputStream = new FileInputStream(inputFile)) {
             byte[] chars = new byte[(int) inputFile.length()];
             int readBytes = fileInputStream.read(chars);
             if (readBytes != (int) inputFile.length())
                 throw new UserInterfaceException("Some data from file could not be read " +
                         "successfully");
-            fileInputStream.close();
             return new String(chars);
         }
         catch (IOException e) {
@@ -125,7 +132,14 @@ public class UserInterfaceModule{
         loadInputData();
         String result;
         if (argParser.isEncode()){
-            Bech32mIOData bech32mIOData = convertFormatEncode();
+            Bech32mIOData bech32mIOData;
+            try {
+                bech32mIOData = convertFormatEncode();
+            }
+            catch (NumberFormatException e) {
+                throw new UserInterfaceException("The conversion of input data failed with for " +
+                        "the following reason: " + e.getMessage());
+            }
             result = new Bech32mModule().encodeBech32mString(bech32mIOData);
         } else {
             Bech32mIOData bech32mIOData = new Bech32mModule().decodeBech32mString(
@@ -135,12 +149,14 @@ public class UserInterfaceModule{
         outputResult(result);
     }
 
-    public void entryPointWrapper() {
+    public int entryPointWrapper() {
         try {
             entryPoint();
+            return 0;
         }
         catch(UserInterfaceException | Bech32mException exc) {
             System.out.println(exc.getMessage());
+            return 1;
         }
     }
 }
