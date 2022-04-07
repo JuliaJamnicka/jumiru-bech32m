@@ -5,13 +5,13 @@ There are two modes this application can run in, encode and decode, which have a
 
 required verbatim, **required group**, *required parameter*, [optional verbatim], (tuple)  
 
-------------
+---
 
 jumiru encode **data_format input_destination output_destination** *HRP*
 
 jumiru decode **data_format input_destination output_destination** [errdetect]
 
-------------
+---
 
 **data_format** = base64/bin/hex
 
