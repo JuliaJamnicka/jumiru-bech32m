@@ -22,7 +22,7 @@ public class Bech32mIOData {
 
     public Bech32mIOData(String hrPart, List<Byte> dataPart) {
         this.hrPart = hrPart;
-        this.dataPart = dataPart;
+        this.dataPart = new ArrayList<>(dataPart);
     }
 
     public Bech32mIOData(String hrPart, String hexDataPart) {

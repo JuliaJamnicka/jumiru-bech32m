@@ -1,9 +1,40 @@
 package cz.fi.muni.pa193.jumiru.bech32m;
 
 import cz.fi.muni.pa193.jumiru.bech32m.Bech32mIOData;
+import cz.fi.muni.pa193.jumiru.converter.DataInputConverter;
+import cz.fi.muni.pa193.jumiru.converter.InputConverter;
 
 public class TestVectors {
+    private static final InputConverter INPUT_CONVERTER = new DataInputConverter();
+
     public static final String[] VALID_BECH32M = {
+            "abcdef140x77khk82w",
+            "test1wejkxar0wg64ekuu",
+            "A1LQFN3A",
+            "a1lqfn3a",
+            "?1v759aa",
+            "test1wejkxar0wg64ekuu",
+            "an83characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11sg7hg6",
+            "abcdef1l7aum6echk45nj3s0wdvt2fg8x9yrzpqzd3ryx",
+           /* "11llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllludsr8",*/
+    };
+
+    public static final Bech32mIOData[] VALID_BECH32_DECODINGS = {
+            new Bech32mIOData("abcdef", INPUT_CONVERTER.convertFromHex("abcdef")),
+            new Bech32mIOData("test", INPUT_CONVERTER.convertFromHex("766563746f72")),
+            new Bech32mIOData("a", INPUT_CONVERTER.convertFromHex("")),
+            new Bech32mIOData("a", INPUT_CONVERTER.convertFromHex("")),
+            new Bech32mIOData("?", INPUT_CONVERTER.convertFromHex("")),
+            new Bech32mIOData("test", INPUT_CONVERTER.convertFromHex("766563746f72")),
+            new Bech32mIOData("an83characterlonghumanreadablepartthatcontainsthetheexcludedcharacters" +
+                    "bioandnumber1", INPUT_CONVERTER.convertFromHex("")),
+            new Bech32mIOData("abcdef", INPUT_CONVERTER.convertFromHex("ffbbcdeb38bdab49ca" +
+                    "307b9ac5a928398a418820")),
+           /* new Bech32mIOData("1", INPUT_CONVERTER.convertFromHex("ffffffffffffffffffffffff" +
+                    "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc0"))*/
+    };
+
+    public static final String[] VALID_CORRECTED_BECH32M = {
             "A1LQFN3A",
             "a1lqfn3a",
             "an83characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11sg7hg6",
@@ -14,23 +45,6 @@ public class TestVectors {
             // additional test vector from feedback mail
             "abcdef140x77khk82w",
             //"test1wejkxar0wg64ekuu" // wrong decoding?, will consult via email
-    };
-
-    public static final Bech32mIOData[] VALID_BECH32_DECODINGS = {
-            new Bech32mIOData("a", ""),
-            new Bech32mIOData("a", ""),
-            new Bech32mIOData("an83characterlonghumanreadablepartthatcontainsthetheexcludedcharacters" +
-                    "bioandnumber1", ""),
-            new Bech32mIOData("abcdef", "1f1e1d1c1b1a191817161514131211100f0e0d0c0b0a090807" +
-                    "06050403020100"),
-            new Bech32mIOData("1", "1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1" +
-                    "f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1" +
-                    "f1f1f1f1f1f1f1f1f1f1f1f1f"),
-            new Bech32mIOData("split", "18171918161c01100b1d0819171d130d10171d16191c01100b0" +
-                    "3191d1b1903031d130b190303190d181d01190303190d"),
-            new Bech32mIOData("?", ""),
-            new Bech32mIOData("abcdef", "150f061e1e"),
-            //new Bech32mIOData("test", "766563746f72")
     };
 
     public static final String[] INVALID_CORRECTS_TO_VALID_BECH32M = {
