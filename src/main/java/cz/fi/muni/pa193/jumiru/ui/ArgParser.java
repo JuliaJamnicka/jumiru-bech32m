@@ -70,8 +70,8 @@ public class ArgParser {
         switch (args[argIndex]) {
             case "encode" -> encode = true;
             case "decode" -> encode = false;
-            default -> throw new UserInterfaceException("Argument " + argIndex + " (" + args[argIndex] +
-                    ") must be encode/decode");
+            default -> throw new UserInterfaceException("Argument " + argIndex + " (" +
+                    args[argIndex] + ") must be encode/decode");
         }
         argIndex++;
     }
@@ -82,8 +82,8 @@ public class ArgParser {
             case "bin" -> dataFormat = dataPartFormatEnum.BIN;
             case "base64" -> dataFormat = dataPartFormatEnum.BASE64;
             case "hex" -> dataFormat = dataPartFormatEnum.HEX;
-            default -> throw new UserInterfaceException("Argument " + argIndex + "(" + args[argIndex] +
-                    ") must be bin/base64/hex");
+            default -> throw new UserInterfaceException("Argument " + argIndex + "(" +
+                    args[argIndex] + ") must be bin/base64/hex");
         }
         argIndex++;
     }
@@ -136,8 +136,8 @@ public class ArgParser {
                             args[argIndex] + "): stdout cannot be selected as input destination");
                 outputDestination = IODestinationEnum.STDOUT;
             }
-            default -> throw new UserInterfaceException("Argument " + argIndex + "(" + args[argIndex] +
-                    ") must be arg/stdin/file/stdout");
+            default -> throw new UserInterfaceException("Argument " + argIndex + "(" +
+                    args[argIndex] + ") must be arg/stdin/file/stdout");
         }
         argIndex++;
     }
