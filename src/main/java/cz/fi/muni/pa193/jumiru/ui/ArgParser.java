@@ -68,15 +68,10 @@ public class ArgParser {
     private void parseEncodeDecode() {
         hasNextArg("Encode/decode argument is missing");
         switch (args[argIndex]) {
-            case "encode":
-                encode = true;
-                break;
-            case "decode":
-                encode = false;
-                break;
-            default:
-                throw new UserInterfaceException("Argument " + argIndex + " (" + args[argIndex] +
-                        ") must be encode/decode");
+            case "encode" -> encode = true;
+            case "decode" -> encode = false;
+            default -> throw new UserInterfaceException("Argument " + argIndex + " (" + args[argIndex] +
+                    ") must be encode/decode");
         }
         argIndex++;
     }
@@ -84,18 +79,11 @@ public class ArgParser {
     private void parseDataFormat() {
         hasNextArg("Data format specification argument (bin/hex/base64) is missing");
         switch (args[argIndex]) {
-            case "bin":
-                dataFormat = dataPartFormatEnum.BIN;
-                break;
-            case "base64":
-                dataFormat = dataPartFormatEnum.BASE64;
-                break;
-            case "hex":
-                dataFormat = dataPartFormatEnum.HEX;
-                break;
-            default:
-                throw new UserInterfaceException("Argument " + argIndex + "(" + args[argIndex] +
-                        ") must be bin/base64/hex");
+            case "bin" -> dataFormat = dataPartFormatEnum.BIN;
+            case "base64" -> dataFormat = dataPartFormatEnum.BASE64;
+            case "hex" -> dataFormat = dataPartFormatEnum.HEX;
+            default -> throw new UserInterfaceException("Argument " + argIndex + "(" + args[argIndex] +
+                    ") must be bin/base64/hex");
         }
         argIndex++;
     }
@@ -121,38 +109,35 @@ public class ArgParser {
     private void parseIODestination(boolean input) {
         hasNextArg("IO destination argument (stdin/file/arg/stdout) is missing");
         switch (args[argIndex]) {
-            case "arg":
+            case "arg" -> {
                 if (!input)
                     throw new UserInterfaceException("Error in argument " + argIndex + "(" +
                             args[argIndex] + "): arg cannot be selected as output destination");
                 inputDestination = IODestinationEnum.ARG;
                 parseDataPart();
-                break;
-            case "emptyarg":
-                inputData = "";
-                break;
-            case "file":
+            }
+            case "emptyarg" -> inputData = "";
+            case "file" -> {
                 if (input)
                     inputDestination = IODestinationEnum.FILE;
                 else
                     outputDestination = IODestinationEnum.FILE;
                 parseFilename(input);
-                break;
-            case "stdin":
+            }
+            case "stdin" -> {
                 if (!input)
                     throw new UserInterfaceException("Error in argument " + argIndex + "(" +
                             args[argIndex] + "): stdin cannot be selected as output destination");
                 inputDestination = IODestinationEnum.STDIN;
-                break;
-            case "stdout":
+            }
+            case "stdout" -> {
                 if (input)
                     throw new UserInterfaceException("Error in argument " + argIndex + "(" +
                             args[argIndex] + "): stdout cannot be selected as input destination");
                 outputDestination = IODestinationEnum.STDOUT;
-                break;
-            default:
-                throw new UserInterfaceException("Argument " + argIndex + "(" + args[argIndex] +
-                        ") must be arg/stdin/file/stdout");
+            }
+            default -> throw new UserInterfaceException("Argument " + argIndex + "(" + args[argIndex] +
+                    ") must be arg/stdin/file/stdout");
         }
         argIndex++;
     }
@@ -175,7 +160,7 @@ public class ArgParser {
         }
     }
 
-    public void parse(){
+    public void parse() {
         parseEncodeDecode();
         parseDataFormat();
         parseIODestination(true);
@@ -185,10 +170,8 @@ public class ArgParser {
         if (!encode)
             parseErrorDetection();
         if (args.length > argIndex) {
-            throw new UserInterfaceException("Following argument " + args[argIndex-1] +
+            throw new UserInterfaceException("Following argument " + args[argIndex - 1] +
                     ", there is one or more unnecessary arguments.");
         }
     }
-
-
 }

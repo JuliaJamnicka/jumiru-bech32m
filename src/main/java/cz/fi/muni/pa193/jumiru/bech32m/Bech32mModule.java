@@ -17,6 +17,7 @@ public final class Bech32mModule implements Bech32mTransformer {
             -1, 29, -1, 24, 13, 25,  9,  8, 23, -1, 18, 22, 31, 27, 19, -1,
              1,  0,  3, 16, 11, 28, 12, 14,  6,  4,  2, -1, -1, -1, -1, -1
     };
+    public static int BENCH32M_MAX_LENGTH = 80;
 
     private int bech32mPolymod(List<Byte> expandedParts) {
         int c = 1;
