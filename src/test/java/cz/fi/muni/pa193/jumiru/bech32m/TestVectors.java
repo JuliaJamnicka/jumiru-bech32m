@@ -1,6 +1,5 @@
 package cz.fi.muni.pa193.jumiru.bech32m;
 
-import cz.fi.muni.pa193.jumiru.bech32m.Bech32mIOData;
 import cz.fi.muni.pa193.jumiru.converter.DataInputConverter;
 import cz.fi.muni.pa193.jumiru.converter.InputConverter;
 

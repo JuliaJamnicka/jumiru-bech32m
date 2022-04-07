@@ -1,11 +1,9 @@
 package cz.fi.muni.pa193.jumiru.converter;
 
 import cz.fi.muni.pa193.jumiru.bech32m.Bech32mIOData;
-import cz.fi.muni.pa193.jumiru.converter.DataOutputConverter;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +16,7 @@ public class Bech32mOutputConverterTest {
 
     @ParameterizedTest
     @MethodSource("provideBinParams")
-    public void CheckValidBinaryConversion(String expected, List<Byte> toConvert) {
+    public void checkValidBinaryConversion(String expected, List<Byte> toConvert) {
         Bech32mIOData data = new Bech32mIOData("", toConvert);
         assertEquals(converter.convertToBinary(data), expected);
     }
@@ -71,7 +69,7 @@ public class Bech32mOutputConverterTest {
 
     @ParameterizedTest
     @MethodSource("provideHexParams")
-    public void CheckValidHexConversion(String expected, List<Byte> toConvert) {
+    public void checkValidHexConversion(String expected, List<Byte> toConvert) {
         Bech32mIOData data = new Bech32mIOData("", toConvert);
         assertEquals(expected, converter.convertToHex(data));
     }
@@ -116,7 +114,7 @@ public class Bech32mOutputConverterTest {
 
     @ParameterizedTest
     @MethodSource("provideBase64Params")
-    public void CheckValidBase64Conversion(String expected, List<Byte> toConvert) {
+    public void checkValidBase64Conversion(String expected, List<Byte> toConvert) {
         Bech32mIOData data = new Bech32mIOData("", toConvert);
         assertEquals(expected, converter.convertToBase64(data));
     }
