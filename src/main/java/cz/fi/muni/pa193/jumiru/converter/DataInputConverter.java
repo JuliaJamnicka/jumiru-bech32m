@@ -4,48 +4,10 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import static cz.fi.muni.pa193.jumiru.converter.ConverterUtils.*;
+
 
 public class DataInputConverter implements InputConverter {
-
-    private String padZerosToString(String input, int n) {
-        int zeroes_to_add = n - (input.length() % n);
-        return "0".repeat(zeroes_to_add % n) + input;
-    }
-
-    private List<Byte> convertBits(List<Byte> bytes) {
-        List<Byte> convertedBytes = new ArrayList<>();
-
-        int fromBits = 8;
-        int toBits = 5;
-
-        int acc = 0;
-        int bits = 0;
-
-        int maxValue = (1 << toBits) - 1;
-        int maxAcc = (1 << (fromBits + toBits - 1)) - 1;
-
-        for (Byte b : bytes) {
-            if ((int) b < 0) {
-                throw new DataInputException(bytes.toString()); //this is ugly
-            }
-
-            acc = ((acc << fromBits) | b) & maxAcc;
-            bits += fromBits;
-
-            while (bits >= toBits) {
-                bits -= toBits;
-                convertedBytes.add((byte) ((acc >> bits) & maxValue));
-            }
-
-        }
-
-        if (bits != 0) {
-            convertedBytes.add((byte) ((acc << (toBits - bits)) & maxValue));
-        }
-
-        return convertedBytes;
-    }
-
 
     public List<Byte> convertFromBinary(String bech32mDataInput) {
         String data = padZerosToString(bech32mDataInput, 8);
@@ -60,7 +22,7 @@ public class DataInputConverter implements InputConverter {
             throw new DataInputException(bech32mDataInput);
         }
 
-        return convertBits(byteArray);
+        return convertBits(byteArray, 8, 5, true);
     }
 
     public List<Byte> convertFromHex(String bech32mDataInput) {
@@ -77,7 +39,7 @@ public class DataInputConverter implements InputConverter {
             throw new DataInputException(bech32mDataInput);
         }
 
-        return convertBits(byteArray);
+        return convertBits(byteArray, 8, 5, true);
     }
 
     public List<Byte> convertFromBase64(String bech32mDataInput) {
@@ -94,7 +56,7 @@ public class DataInputConverter implements InputConverter {
             bytes.add(b);
         }
 
-        return convertBits(bytes);
+        return convertBits(bytes, 8, 5, true);
     }
     
 }
