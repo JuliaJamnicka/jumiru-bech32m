@@ -6,7 +6,7 @@ import java.util.List;
 public class ConverterUtils {
     public static String padZerosToString(String input, int n) {
         int zeroes_to_add = n - (input.length() % n);
-        return input + "0".repeat(zeroes_to_add % n);
+        return "0".repeat(zeroes_to_add % n) + input;
     }
 
     public static List<Byte> convertBits(List<Byte> bytes, int fromBits, int toBits, boolean pad) {
@@ -18,11 +18,12 @@ public class ConverterUtils {
         int maxAcc = (1 << (fromBits + toBits - 1)) - 1;
 
         for (Byte b : bytes) {
-            if ((int) b < 0) {
+            int unsigned = b & 0xff;
+            if (unsigned < 0 || (unsigned >> fromBits != 0)) {
                 throw new DataInputException(bytes.toString()); //this is ugly
             }
 
-            acc = ((acc << fromBits) | b) & maxAcc;
+            acc = ((acc << fromBits) | unsigned) & maxAcc;
             bits += fromBits;
 
             while (bits >= toBits) {
