@@ -36,7 +36,7 @@ public class Bech32mModuleTest {
             Exception thrownException = assertThrows(Bech32mInvalidChecksumException.class, () -> module
                     .decodeBech32mString(TestVectors.INVALID_CORRECTS_TO_VALID_BECH32M[finalI], true));
             assertEquals("Invalid checksum. Error correction found these candidates for " +
-                    "corrected original string: \n" + TestVectors.VALID_BECH32M[finalI].toLowerCase(),
+                    "corrected original string: \n" + TestVectors.VALID_CORRECTED_BECH32M[finalI].toLowerCase(),
                     thrownException.getMessage());
         }
     }
@@ -44,6 +44,8 @@ public class Bech32mModuleTest {
     @Test
     public void DecodeValidStringsTest() {
         for (int i = 0; i < TestVectors.VALID_BECH32M.length; i++) {
+            Bech32mIOData d = module.decodeBech32mString(TestVectors.VALID_BECH32M[i], false);
+            Bech32mIOData x = TestVectors.VALID_BECH32_DECODINGS[i];
             assertEquals(module.decodeBech32mString(TestVectors.VALID_BECH32M[i], false),
                     TestVectors.VALID_BECH32_DECODINGS[i]);
         }
