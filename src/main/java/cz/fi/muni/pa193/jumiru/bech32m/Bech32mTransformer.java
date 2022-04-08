@@ -9,7 +9,6 @@ public interface Bech32mTransformer {
      * DOES NOT CHECK WHETHER CHECKSUM IS CORRECT!
      *
      * @param  str  string to check
-     * @return      void
      * @throws Bech32mException for invalid string
      */
     void checkBech32mString(String str);
