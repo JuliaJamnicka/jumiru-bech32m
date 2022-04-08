@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EncodingTest {
+public class UserInterfaceEncodingTest {
 
     private static Stream<Arguments> provideValidHexEncodedInputs() {
         return Stream.of(
@@ -57,7 +57,7 @@ public class EncodingTest {
     }
 
 
-    public void shouldReturnEncodedBech32m(String[] args, String input, String result) {
+    public void checkEncodedBech32mOutput(String[] args, String input, String result) {
         UserInterfaceModule module = new UserInterfaceModule(args);
 
         // catching standard output
@@ -80,7 +80,7 @@ public class EncodingTest {
                 "stdout",
                 "abcdef"
         };
-        shouldReturnEncodedBech32m(args, input, result);
+        checkEncodedBech32mOutput(args, input, result);
     }
 
     @ParameterizedTest
@@ -94,7 +94,7 @@ public class EncodingTest {
                 "stdout",
                 "n545nggn3gh94h34h"
         };
-        shouldReturnEncodedBech32m(args, input, result);
+        checkEncodedBech32mOutput(args, input, result);
     }
 
     @ParameterizedTest
@@ -108,6 +108,8 @@ public class EncodingTest {
                 "stdout",
                 "1111111111"
         };
-        shouldReturnEncodedBech32m(args, input, result);
+        checkEncodedBech32mOutput(args, input, result);
     }
+
+
 }
