@@ -101,7 +101,13 @@ public final class UserInterfaceModule implements UserInterface {
 
     private void outputResult(final String result) {
         switch (argParser.getOutputDestination()) {
-            case STDOUT -> System.out.println("Decoded data part is: " + result);
+            case STDOUT -> {
+                if (argParser.isEncode())
+                    System.out.println("Encoded bech32m string is: " + result);
+                else
+                    System.out.println("Decoded data part is: " + result);
+
+            }
             case FILE -> fileWriteResult(argParser.getOutputFileName(), result);
         }
     }
