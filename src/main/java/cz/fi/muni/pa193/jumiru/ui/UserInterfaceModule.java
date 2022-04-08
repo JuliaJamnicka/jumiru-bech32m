@@ -6,21 +6,24 @@ import cz.fi.muni.pa193.jumiru.bech32m.Bech32mModule;
 import cz.fi.muni.pa193.jumiru.converter.DataInputConverter;
 import cz.fi.muni.pa193.jumiru.converter.DataOutputConverter;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.FileWriter;
 import java.util.List;
 import java.util.Scanner;
 
 import static cz.fi.muni.pa193.jumiru.bech32m.Bech32mModule.BENCH32M_MAX_LENGTH;
 
+public final class UserInterfaceModule implements UserInterface {
+    private final ArgParser argParser;
 
-public class UserInterfaceModule{
-    ArgParser argParser;
-
-    public UserInterfaceModule(String[] args) {
+    public UserInterfaceModule(final String[] args) {
         this.argParser = new ArgParser(args);
     }
 
-    private String readDataFromFile(String filename){
+    private String readDataFromFile(final String filename) {
         File inputFile =  new File(filename);
         if (!inputFile.isFile())
             throw new UserInterfaceException("The provided input file does not exist");
@@ -30,21 +33,20 @@ public class UserInterfaceModule{
             maximal amount of them is the maximal bech32m length -1 for smallest possible HRP and
             -1 for the separator.
          */
-        int binaryDataPartMaxLength = (BENCH32M_MAX_LENGTH-2)*8;
-        if (inputFile.length() > binaryDataPartMaxLength){
+        int binaryDataPartMaxLength = (BENCH32M_MAX_LENGTH - 2) * 8;
+        if (inputFile.length() > binaryDataPartMaxLength) {
             throw new UserInterfaceException("The file exceeds maximal allowed length");
         }
         try (FileInputStream fileInputStream = new FileInputStream(inputFile)) {
             byte[] chars = new byte[(int) inputFile.length()];
             int readBytes = fileInputStream.read(chars);
             if (readBytes != (int) inputFile.length())
-                throw new UserInterfaceException("Some data from file could not be read " +
-                        "successfully");
+                throw new UserInterfaceException("Some data from file could not be read "
+                        + "successfully");
             return new String(chars);
-        }
-        catch (IOException e) {
-            throw new UserInterfaceException("The read from file failed due to the following " +
-                    "reason: " + e.getMessage());
+        } catch (IOException e) {
+            throw new UserInterfaceException("The read from file failed due to the following "
+                    + "reason: " + e.getMessage());
         }
     }
 
@@ -60,7 +62,7 @@ public class UserInterfaceModule{
         }
     }
 
-    private Bech32mIOData convertFormatEncode(){
+    private Bech32mIOData convertFormatEncode() {
         Bech32mIOData bech32mIOData;
         DataInputConverter inputConverter = new DataInputConverter();
         switch (argParser.getDataFormat()) {
@@ -75,13 +77,13 @@ public class UserInterfaceModule{
                 dataPartBytes = inputConverter.convertFromBase64(argParser.getInputData());
                 bech32mIOData = new Bech32mIOData(argParser.getHumanReadablePart(), dataPartBytes);
             }
-            default -> throw new UserInterfaceException("Unsupported input type encountered while" +
-                    " converting input data part");
+            default -> throw new UserInterfaceException("Unsupported input type encountered while"
+                    + " converting input data part");
         }
         return bech32mIOData;
     }
 
-    private String convertFormatDecode(Bech32mIOData bech32mIOData){
+    private String convertFormatDecode(final Bech32mIOData bech32mIOData) {
         String result;
         DataOutputConverter outputConverter = new DataOutputConverter();
         result = switch (argParser.getDataFormat()) {
@@ -92,17 +94,17 @@ public class UserInterfaceModule{
         return result;
     }
 
-    private void fileWriteResult(String outputFileName, String result){
+    private void fileWriteResult(final String outputFileName, final String result) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName))) {
             writer.write(result);
         } catch (IOException e) {
-            throw new UserInterfaceException("Writing into the output file failed for the" +
-                    " following reason: " + e.getMessage());
+            throw new UserInterfaceException("Writing into the output file failed for the"
+                    + " following reason: " + e.getMessage());
         }
         System.out.println("File " + outputFileName + " was created successfully");
     }
 
-    private void outputResult(String result){
+    private void outputResult(final String result) {
         switch (argParser.getOutputDestination()) {
             case STDOUT -> System.out.println("Decoded data part is: " + result);
             case FILE -> fileWriteResult(argParser.getOutputFileName(), result);
@@ -113,14 +115,13 @@ public class UserInterfaceModule{
         argParser.parse();
         loadInputData();
         String result;
-        if (argParser.isEncode()){
+        if (argParser.isEncode()) {
             Bech32mIOData bech32mIOData;
             try {
                 bech32mIOData = convertFormatEncode();
-            }
-            catch (NumberFormatException e) {
-                throw new UserInterfaceException("The conversion of input data failed with for " +
-                        "the following reason: " + e.getMessage());
+            } catch (NumberFormatException e) {
+                throw new UserInterfaceException("The conversion of input data failed with for "
+                        + "the following reason: " + e.getMessage());
             }
             result = new Bech32mModule().encodeBech32mString(bech32mIOData);
         } else {
@@ -135,8 +136,7 @@ public class UserInterfaceModule{
         try {
             entryPoint();
             return 0;
-        }
-        catch(UserInterfaceException | Bech32mException exc) {
+        } catch (UserInterfaceException | Bech32mException exc) {
             System.err.println(exc.getMessage());
             return 1;
         }
