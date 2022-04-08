@@ -18,7 +18,7 @@ public final class Bech32mModule implements Bech32mTransformer {
             -1, 29, -1, 24, 13, 25,  9,  8, 23, -1, 18, 22, 31, 27, 19, -1,
              1,  0,  3, 16, 11, 28, 12, 14,  6,  4,  2, -1, -1, -1, -1, -1
     };
-    public static final int BENCH32M_MAX_LENGTH = 80;
+    public static final int BENCH32M_MAX_LENGTH = 90;
 
     private int bech32mPolymod(List<Byte> expandedParts) {
         int c = 1;
@@ -67,6 +67,24 @@ public final class Bech32mModule implements Bech32mTransformer {
         return bech32mPolymod(expandedHrPart) == BECH32M_CHECKSUM_CONSTANT;
     }
 
+    private void checkHrPart(String str) {
+        for (int index = 0; index < str.length(); index++) {
+            if (str.charAt(index) < 33 || str.charAt(index) > 126) {
+                throw new Bech32mException("Invalid Bech32m to decode: Unsupported character " +
+                        "in the human readable part");
+                }
+        }
+    }
+
+    private void checkDataPart(String str) {
+        for (int index = 0; index < str.length(); index++) {
+            if (CHARSET.indexOf(str.charAt(index)) == -1) {
+                throw new Bech32mException("Invalid Bech32m to decode: Unsupported character " +
+                        "in the data part");
+            }
+        }
+    }
+
     public void checkBech32mString(String str) {
         if (str == null) throw new Bech32mException("Invalid Bech32m to decode: Null string");
         if (!str.equals(str.toLowerCase(Locale.ENGLISH))
@@ -75,27 +93,13 @@ public final class Bech32mModule implements Bech32mTransformer {
 
         str = str.toLowerCase(Locale.ENGLISH);
 
-        boolean separatorFound = false;
-        int separatorPos = 0;
-        for (int i = str.length() - 1; i >= 0; i--) {
-            if (str.charAt(i) == '1' && !separatorFound) {
-                separatorFound = true;
-                separatorPos = i;
-                continue;
-            }
+        if (str.length() > BENCH32M_MAX_LENGTH)
+            throw new Bech32mException("Invalid Bech32m to decode: String longer than " +
+                    BENCH32M_MAX_LENGTH + " characters.");
 
-            if (!separatorFound) {
-                if (CHARSET.indexOf(str.charAt(i)) == -1)
-                    throw new Bech32mException("Invalid Bech32m to decode: Unsupported character " +
-                            "in the data part");
-            } else {
-                if (str.charAt(i) < 33 || str.charAt(i) > 126)
-                    throw new Bech32mException("Invalid Bech32m to decode: Unsupported character " +
-                            "in the human readable part");
-            }
-        }
+        int separatorPos = str.lastIndexOf('1');
 
-        if (!separatorFound) throw new Bech32mException("Invalid Bech32m to decode: Missing " +
+        if (separatorPos == -1) throw new Bech32mException("Invalid Bech32m to decode: Missing " +
                 "separator");
         if (separatorPos == 0) throw new Bech32mException("Invalid Bech32m to decode: Missing " +
                 "human readable part");
@@ -103,6 +107,9 @@ public final class Bech32mModule implements Bech32mTransformer {
                 " long");
         if (str.length() - separatorPos < 7) throw new Bech32mException("Invalid Bech32m to " +
                 "decode: Data part too short");
+
+        checkHrPart(str.substring(0, separatorPos));
+        checkDataPart(str.substring(separatorPos + 1));
     }
 
     public Bech32mIOData decodeBech32mString(String str, boolean performErrorCorrection) {
