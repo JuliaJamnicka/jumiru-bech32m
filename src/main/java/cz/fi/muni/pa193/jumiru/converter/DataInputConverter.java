@@ -16,7 +16,8 @@ public class DataInputConverter implements InputConverter {
 
         try {
             for (int i = 0; i < data.length(); i += 8) {
-                byteArray.add(Byte.parseByte(data.substring(i, i + 8), 2));
+                int decimal = Integer.parseInt(data.substring(i, i + 8), 2);
+                byteArray.add((byte) decimal);
             }
         } catch (NumberFormatException e) {
             throw new DataInputException(bech32mDataInput);
