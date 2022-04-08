@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 
@@ -56,7 +57,12 @@ public final class UserInterfaceModule implements UserInterface {
             case STDIN -> {
                 System.out.println("Enter the data part to be en/decoded:");
                 Scanner scanner = new Scanner(System.in);
-                argParser.setInputData(scanner.nextLine());
+                try {
+                    argParser.setInputData(scanner.nextLine());
+                } catch (NoSuchElementException e) {
+                    throw new UserInterfaceException("Unterminated input is not allowed here");
+                }
+
                 scanner.close();
                 if (argParser.getInputData().length() > BIN_DATA_MAX_LENGTH) {
                     throw new UserInterfaceException("The data part exceeds maximal allowed "
@@ -141,7 +147,10 @@ public final class UserInterfaceModule implements UserInterface {
         try {
             entryPoint();
             return 0;
-        } catch (UserInterfaceException | Bech32mException exc) {
+        } catch (UserInterfaceException exc) {
+            System.err.println(exc.getMessage() + "\n\nFor correct usage, see README.md file");
+            return 1;
+        } catch (Bech32mException exc) {
             System.err.println(exc.getMessage());
             return 1;
         }
