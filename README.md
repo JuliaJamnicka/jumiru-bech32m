@@ -19,6 +19,10 @@ jumiru decode **data_format input_destination output_destination** [errdetect]
 
 **output_destination** = stdout/(file *file_name*)
 
+<br>
+
+*Note: Input from stdin must  be terminated by a newline*
+
 ### Example usage
 
 * Encode "a" in HRP with empty data part in hex read from argument and output it to stdout
