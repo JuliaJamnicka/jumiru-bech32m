@@ -11,11 +11,10 @@ public class TestVectors {
             "test1wejkxar0wg64ekuu",
             "A1LQFN3A",
             "a1lqfn3a",
-            "?1v759aa",
-            "test1wejkxar0wg64ekuu",
             "an83characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11sg7hg6",
             "abcdef1l7aum6echk45nj3s0wdvt2fg8x9yrzpqzd3ryx",
-           /* "11llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllludsr8",*/
+            "?1v759aa",
+            "split1checkupstagehandshakeupstreamerranterredcaperredlc445v"
     };
 
     public static final Bech32mIOData[] VALID_BECH32_DECODINGS = {
@@ -23,27 +22,24 @@ public class TestVectors {
             new Bech32mIOData("test", INPUT_CONVERTER.convertFromHex("766563746f72")),
             new Bech32mIOData("a", INPUT_CONVERTER.convertFromHex("")),
             new Bech32mIOData("a", INPUT_CONVERTER.convertFromHex("")),
-            new Bech32mIOData("?", INPUT_CONVERTER.convertFromHex("")),
-            new Bech32mIOData("test", INPUT_CONVERTER.convertFromHex("766563746f72")),
             new Bech32mIOData("an83characterlonghumanreadablepartthatcontainsthetheexcludedcharacters" +
                     "bioandnumber1", INPUT_CONVERTER.convertFromHex("")),
             new Bech32mIOData("abcdef", INPUT_CONVERTER.convertFromHex("ffbbcdeb38bdab49ca" +
                     "307b9ac5a928398a418820")),
-           /* new Bech32mIOData("1", INPUT_CONVERTER.convertFromHex("ffffffffffffffffffffffff" +
-                    "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc0"))*/
+            new Bech32mIOData("?", INPUT_CONVERTER.convertFromHex("")),
+            new Bech32mIOData("split", INPUT_CONVERTER.convertFromHex("c5f38b70305f519bf66d" +
+                    "85fb6cf03058f3dde463ecd7918f2dc743918f2d"))
     };
 
     public static final String[] VALID_CORRECTED_BECH32M = {
             "A1LQFN3A",
             "a1lqfn3a",
             "an83characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11sg7hg6",
+            "abcdef140x77khk82w",
             "abcdef1l7aum6echk45nj3s0wdvt2fg8x9yrzpqzd3ryx",
             "11llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllludsr8",
             "split1checkupstagehandshakeupstreamerranterredcaperredlc445v",
-            "?1v759aa",
-            // additional test vector from feedback mail
-            "abcdef140x77khk82w",
-            //"test1wejkxar0wg64ekuu" // wrong decoding?, will consult via email
+            "?1v759aa"
     };
 
     public static final String[] INVALID_CORRECTS_TO_VALID_BECH32M = {
@@ -51,12 +47,12 @@ public class TestVectors {
             "B1LQFN3A",
             "b1lqfn3a",
             "an84characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11sg7hg6",
+            "zbcdef140x77khk82w",
             // error in data part
             "abcdef1p7aum6echk45nj3s0wdvt2fg8x9yrzpqzd3ryx",
             "11lllllllllllllllllllllllllllllllllllllllllllllllllllrllllllllllllllllllllllllllllllludsr8",
             "split1cheqkupstagehandshakeupstreamerranterredcaperredlc445v",
-            "!1v759aa", // error in data part
-            "zbcdef140x77khk82w", // error in hrp
+            "!1v759aa"
     };
 
     public static final String[] INVALID_BECH32M = {
