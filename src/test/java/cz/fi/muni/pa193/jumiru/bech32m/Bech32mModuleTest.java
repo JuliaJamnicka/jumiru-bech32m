@@ -4,30 +4,32 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class Bech32mModuleTest {
     private static final Bech32mModule module = new Bech32mModule();
 
     @Test
     public void checkValidStringsTest() {
-        for (String test_vector : TestVectors.VALID_BECH32M) {
-            assertDoesNotThrow(() -> module.checkBech32mString(test_vector));
+        for (String testVector : TestVectors.VALID_BECH32M) {
+            assertDoesNotThrow(() -> module.checkBech32mString(testVector));
         }
     }
 
     @Test
     public void checkInvalidStringsTest() {
-        for (String test_vector : TestVectors.INVALID_BECH32M) {
-            assertThrows(Bech32mException.class, () -> module.checkBech32mString(test_vector));
+        for (String testVector : TestVectors.INVALID_BECH32M) {
+            assertThrows(Bech32mException.class, () -> module.checkBech32mString(testVector));
         }
     }
 
     @Test
     public void checkInvalidChecksumTest() {
-        for (String test_vector : TestVectors.INVALID_BECH32M_CHECKSUM) {
+        for (String testVector : TestVectors.INVALID_BECH32M_CHECKSUM) {
             assertThrows(Bech32mInvalidChecksumException.class, () -> module
-                    .decodeBech32mString(test_vector, false));
+                    .decodeBech32mString(testVector, false));
         }
     }
 

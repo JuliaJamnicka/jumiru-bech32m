@@ -22,14 +22,14 @@ public final class Bech32mModule implements Bech32mTransformer {
 
     private int bech32mPolymod(List<Byte> expandedParts) {
         int c = 1;
-        int[] GEN = {0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3};
+        int[] generator = {0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3};
         for (byte value: expandedParts) {
             byte c0 = (byte) (c >>> 25);
             c = ((c & 0x1ffffff) << 5) ^ (value & 0xff);
             int p = 1;
             for (int i = 0; i<5; i++) {
                 if ((c0 & p) == p) {
-                    c ^= GEN[i];
+                    c ^= generator[i];
                 }
                 p *= 2;
             }
