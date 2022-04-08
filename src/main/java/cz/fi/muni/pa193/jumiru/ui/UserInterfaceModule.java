@@ -4,6 +4,7 @@ import cz.fi.muni.pa193.jumiru.bech32m.Bech32mException;
 import cz.fi.muni.pa193.jumiru.bech32m.Bech32mIOData;
 import cz.fi.muni.pa193.jumiru.bech32m.Bech32mModule;
 import cz.fi.muni.pa193.jumiru.converter.DataInputConverter;
+import cz.fi.muni.pa193.jumiru.converter.DataInputException;
 import cz.fi.muni.pa193.jumiru.converter.DataOutputConverter;
 
 import java.io.BufferedWriter;
@@ -63,23 +64,17 @@ public final class UserInterfaceModule implements UserInterface {
     }
 
     private Bech32mIOData convertFormatEncode() {
-        Bech32mIOData bech32mIOData;
         DataInputConverter inputConverter = new DataInputConverter();
+        List<Byte> dataPartBytes;
         switch (argParser.getDataFormat()) {
-            case HEX -> bech32mIOData = new Bech32mIOData(argParser.getHumanReadablePart(),
-                    argParser.getInputData());
-            case BIN -> {
-                List<Byte> dataPartHex = inputConverter.convertFromBinary(argParser.getInputData());
-                bech32mIOData = new Bech32mIOData(argParser.getHumanReadablePart(), dataPartHex);
-            }
-            case BASE64 -> {
-                List<Byte> dataPartBytes;
-                dataPartBytes = inputConverter.convertFromBase64(argParser.getInputData());
-                bech32mIOData = new Bech32mIOData(argParser.getHumanReadablePart(), dataPartBytes);
-            }
+            case HEX -> dataPartBytes = inputConverter.convertFromHex(argParser.getInputData());
+            case BIN -> dataPartBytes = inputConverter.convertFromBinary(argParser.getInputData());
+            case BASE64 -> dataPartBytes = inputConverter.convertFromBase64(argParser.getInputData());
             default -> throw new UserInterfaceException("Unsupported input type encountered while"
                     + " converting input data part");
         }
+        Bech32mIOData bech32mIOData;
+        bech32mIOData = new Bech32mIOData(argParser.getHumanReadablePart(), dataPartBytes);
         return bech32mIOData;
     }
 
@@ -119,7 +114,7 @@ public final class UserInterfaceModule implements UserInterface {
             Bech32mIOData bech32mIOData;
             try {
                 bech32mIOData = convertFormatEncode();
-            } catch (NumberFormatException e) {
+            } catch (DataInputException e) {
                 throw new UserInterfaceException("The conversion of input data failed with for "
                         + "the following reason: " + e.getMessage());
             }
