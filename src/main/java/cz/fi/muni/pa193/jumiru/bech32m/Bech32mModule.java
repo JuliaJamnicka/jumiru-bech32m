@@ -52,7 +52,6 @@ public final class Bech32mModule implements Bech32mTransformer {
     }
 
     private List<Byte> decodeDataPart(String dataPart) {
-        //dataPart = dataPart.toLowerCase(); // handled by CHARSET_REV
         ArrayList<Byte> data = new ArrayList<>();
         data.ensureCapacity(dataPart.length());
         for (int i = 0; i < dataPart.length(); i++) {
@@ -72,11 +71,9 @@ public final class Bech32mModule implements Bech32mTransformer {
             throw new Bech32mException("Invalid Bech32m to decode: Missing " +
                     "human readable part");
         }
-
         if (str.length() >= 84) {
             throw new Bech32mException("Invalid Bech32m to decode: Hrp too long");
         }
-
         for (int index = 0; index < str.length(); index++) {
             if (str.charAt(index) < 33 || str.charAt(index) > 126) {
                 throw new Bech32mException("Invalid Bech32m to decode: Unsupported character " +
@@ -89,7 +86,6 @@ public final class Bech32mModule implements Bech32mTransformer {
         if (str.length() < 6) {
             throw new Bech32mException("Invalid Bech32m to decode: Data part too short");
         }
-
         for (int index = 0; index < str.length(); index++) {
             if (CHARSET.indexOf(str.charAt(index)) == -1) {
                 throw new Bech32mException("Invalid Bech32m to decode: Unsupported character " +
@@ -128,7 +124,6 @@ public final class Bech32mModule implements Bech32mTransformer {
         checkBech32mString(str);
 
         int separatorPos = str.lastIndexOf('1');
-
         String hrPart = str.substring(0, separatorPos).toLowerCase(Locale.ENGLISH);
         List<Byte> data = decodeDataPart(str.substring(separatorPos + 1));
 
@@ -143,25 +138,8 @@ public final class Bech32mModule implements Bech32mTransformer {
         return new Bech32mIOData(hrPart, data.subList(0, data.size() - 6));
     }
 
-    private List<String> findPossibleErrorCorrections(String hrPart, List<Byte> data) {
+    private List<String> findPossibleErrorCorrectionsInHrPart(String hrPart, List<Byte> data) {
         List<String> candidates = new ArrayList<>();
-
-        List<Byte> dataPart = new ArrayList<>(data);
-        for (int i = 0; i < dataPart.size() - 6; i++) {
-            byte originalValue = dataPart.get(i);
-            for (byte replacement = 0; replacement < 32; replacement++) {
-                if (replacement == originalValue) {
-                    continue;
-                }
-                dataPart.set(i, replacement);
-                if (verifyChecksum(hrPart, dataPart)) {
-                    candidates.add(encodeBech32mString(new Bech32mIOData(hrPart,
-                            new ArrayList<>(dataPart.subList(0, dataPart.size() - 6)))));
-                }
-            }
-            dataPart.set(i, originalValue);
-        }
-
         StringBuilder hrPartMutable = new StringBuilder(hrPart);
         for (int i = 0; i < hrPartMutable.length(); i++) {
             char originalValue = hrPartMutable.charAt(i);
@@ -177,7 +155,32 @@ public final class Bech32mModule implements Bech32mTransformer {
             }
             hrPartMutable.setCharAt(i, originalValue);
         }
+        return candidates;
+    }
 
+    private List<String> findPossibleErrorCorrectionsInDataPart(String hrPart, List<Byte> data) {
+        List<String> candidates = new ArrayList<>();
+        List<Byte> dataPart = new ArrayList<>(data);
+        for (int i = 0; i < dataPart.size() - 6; i++) {
+            byte originalValue = dataPart.get(i);
+            for (byte replacement = 0; replacement < 32; replacement++) {
+                if (replacement == originalValue) {
+                    continue;
+                }
+                dataPart.set(i, replacement);
+                if (verifyChecksum(hrPart, dataPart)) {
+                    candidates.add(encodeBech32mString(new Bech32mIOData(hrPart,
+                            new ArrayList<>(dataPart.subList(0, dataPart.size() - 6)))));
+                }
+            }
+            dataPart.set(i, originalValue);
+        }
+        return candidates;
+    }
+
+    private List<String> findPossibleErrorCorrections(String hrPart, List<Byte> data) {
+        List<String> candidates = new ArrayList<>(findPossibleErrorCorrectionsInHrPart(hrPart, data));
+        candidates.addAll(findPossibleErrorCorrectionsInDataPart(hrPart, data));
         return candidates;
     }
 
