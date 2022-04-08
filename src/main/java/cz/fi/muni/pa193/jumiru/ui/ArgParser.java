@@ -1,12 +1,12 @@
 package cz.fi.muni.pa193.jumiru.ui;
 
-public class ArgParser {
+public final class ArgParser {
     private final String[] args;
     private int argIndex = 0;
     private boolean encode;
-    enum dataPartFormatEnum {BIN, HEX, BASE64}
-    private dataPartFormatEnum dataFormat;
-    enum IODestinationEnum {STDIN, ARG, EMPTYARG, FILE, STDOUT}
+    enum DataPartFormatEnum { BIN, HEX, BASE64 }
+    private DataPartFormatEnum dataFormat;
+    enum IODestinationEnum { STDIN, ARG, EMPTYARG, FILE, STDOUT }
     private IODestinationEnum inputDestination;
     private IODestinationEnum outputDestination;
     private String inputFileName;
@@ -15,7 +15,7 @@ public class ArgParser {
     private String inputData;
     private boolean errorDetection = false;
 
-    public ArgParser(String[] args) {
+    public ArgParser(final String[] args) {
         this.args = args;
     }
 
@@ -23,7 +23,7 @@ public class ArgParser {
         return encode;
     }
 
-    public dataPartFormatEnum getDataFormat() {
+    public DataPartFormatEnum getDataFormat() {
         return dataFormat;
     }
 
@@ -51,7 +51,7 @@ public class ArgParser {
         return inputData;
     }
 
-    public void setInputData(String inputData) {
+    public void setInputData(final String inputData) {
         this.inputData = inputData;
     }
 
@@ -59,7 +59,7 @@ public class ArgParser {
         return errorDetection;
     }
 
-    private void hasNextArg(String errorMsg) {
+    private void hasNextArg(final String errorMsg) {
         if (args.length <= argIndex) {
             throw new UserInterfaceException(errorMsg);
         }
@@ -70,8 +70,8 @@ public class ArgParser {
         switch (args[argIndex]) {
             case "encode" -> encode = true;
             case "decode" -> encode = false;
-            default -> throw new UserInterfaceException("Argument " + argIndex + " (" +
-                    args[argIndex] + ") must be encode/decode");
+            default -> throw new UserInterfaceException("Argument " + argIndex + " ("
+                    + args[argIndex] + ") must be encode/decode");
         }
         argIndex++;
     }
@@ -79,21 +79,21 @@ public class ArgParser {
     private void parseDataFormat() {
         hasNextArg("Data format specification argument (bin/hex/base64) is missing");
         switch (args[argIndex]) {
-            case "bin" -> dataFormat = dataPartFormatEnum.BIN;
-            case "base64" -> dataFormat = dataPartFormatEnum.BASE64;
-            case "hex" -> dataFormat = dataPartFormatEnum.HEX;
-            default -> throw new UserInterfaceException("Argument " + argIndex + "(" +
-                    args[argIndex] + ") must be bin/base64/hex");
+            case "bin" -> dataFormat = DataPartFormatEnum.BIN;
+            case "base64" -> dataFormat = DataPartFormatEnum.BASE64;
+            case "hex" -> dataFormat = DataPartFormatEnum.HEX;
+            default -> throw new UserInterfaceException("Argument " + argIndex + "("
+                    + args[argIndex] + ") must be bin/base64/hex");
         }
         argIndex++;
     }
 
     private void parseFilename(boolean input) {
         argIndex++;
-        if (input){
+        if (input) {
             hasNextArg("FileName argument is missing");
         }
-        if (input){
+        if (input) {
             inputFileName = args[argIndex];
         } else {
             outputFileName = args[argIndex];
@@ -106,13 +106,13 @@ public class ArgParser {
         inputData = args[argIndex];
     }
 
-    private void parseIODestination(boolean input) {
+    private void parseIODestination(final boolean input) {
         hasNextArg("IO destination argument (stdin/file/arg/stdout) is missing");
         switch (args[argIndex]) {
             case "arg" -> {
                 if (!input)
-                    throw new UserInterfaceException("Error in argument " + argIndex + "(" +
-                            args[argIndex] + "): arg cannot be selected as output destination");
+                    throw new UserInterfaceException("Error in argument " + argIndex + "("
+                            + args[argIndex] + "): arg cannot be selected as output destination");
                 inputDestination = IODestinationEnum.ARG;
                 parseDataPart();
             }
@@ -126,18 +126,18 @@ public class ArgParser {
             }
             case "stdin" -> {
                 if (!input)
-                    throw new UserInterfaceException("Error in argument " + argIndex + "(" +
-                            args[argIndex] + "): stdin cannot be selected as output destination");
+                    throw new UserInterfaceException("Error in argument " + argIndex + "("
+                            + args[argIndex] + "): stdin cannot be selected as output destination");
                 inputDestination = IODestinationEnum.STDIN;
             }
             case "stdout" -> {
                 if (input)
-                    throw new UserInterfaceException("Error in argument " + argIndex + "(" +
-                            args[argIndex] + "): stdout cannot be selected as input destination");
+                    throw new UserInterfaceException("Error in argument " + argIndex + "("
+                            + args[argIndex] + "): stdout cannot be selected as input destination");
                 outputDestination = IODestinationEnum.STDOUT;
             }
-            default -> throw new UserInterfaceException("Argument " + argIndex + "(" +
-                    args[argIndex] + ") must be arg/stdin/file/stdout");
+            default -> throw new UserInterfaceException("Argument " + argIndex + "("
+                    + args[argIndex] + ") must be arg/stdin/file/stdout");
         }
         argIndex++;
     }
@@ -154,8 +154,8 @@ public class ArgParser {
                 errorDetection = true;
                 argIndex++;
             } else {
-                throw new UserInterfaceException("The optional 'errdetect' argument expected and " +
-                        "instead, '" + args[argIndex] + "' was provided");
+                throw new UserInterfaceException("The optional 'errdetect' argument expected and "
+                        + "instead, '" + args[argIndex] + "' was provided");
             }
         }
     }
@@ -170,8 +170,8 @@ public class ArgParser {
         if (!encode)
             parseErrorDetection();
         if (args.length > argIndex) {
-            throw new UserInterfaceException("Following argument " + args[argIndex - 1] +
-                    ", there is one or more unnecessary arguments.");
+            throw new UserInterfaceException("Following argument " + args[argIndex - 1]
+                    + ", there is one or more unnecessary arguments.");
         }
     }
 }

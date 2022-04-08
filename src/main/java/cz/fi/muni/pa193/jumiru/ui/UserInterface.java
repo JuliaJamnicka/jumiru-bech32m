@@ -1,6 +1,8 @@
 package cz.fi.muni.pa193.jumiru.ui;
 
-
+/**
+ * This interface handles the whole of user interface functionality.
+ */
 public interface UserInterface {
 
     /**

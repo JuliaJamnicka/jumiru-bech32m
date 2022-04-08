@@ -1,21 +1,21 @@
 package cz.fi.muni.pa193.jumiru.ui;
 
+import static cz.fi.muni.pa193.jumiru.bech32m.Bech32mModule.BENCH32M_MAX_LENGTH;
+
 import cz.fi.muni.pa193.jumiru.bech32m.Bech32mException;
 import cz.fi.muni.pa193.jumiru.bech32m.Bech32mIOData;
 import cz.fi.muni.pa193.jumiru.bech32m.Bech32mModule;
 import cz.fi.muni.pa193.jumiru.converter.DataInputConverter;
 import cz.fi.muni.pa193.jumiru.converter.DataInputException;
 import cz.fi.muni.pa193.jumiru.converter.DataOutputConverter;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
-import static cz.fi.muni.pa193.jumiru.bech32m.Bech32mModule.BENCH32M_MAX_LENGTH;
 
 public final class UserInterfaceModule implements UserInterface {
     private final ArgParser argParser;
