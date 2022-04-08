@@ -25,23 +25,6 @@ public class Bech32mIOData {
         this.dataPart = new ArrayList<>(dataPart);
     }
 
-    public Bech32mIOData(String hrPart, String hexDataPart) {
-        this.hrPart = hrPart;
-        this.dataPart = convertHexToBytes(hexDataPart);
-    }
-
-    private List<Byte> convertHexToBytes(String hex) {
-        ArrayList<Byte> bytes = new ArrayList<>();
-        if (hex.length() % 2 == 1) {
-            hex = hex.concat("0");
-        }
-        bytes.ensureCapacity(hex.length() / 2);
-        for (int i = 0; i < hex.length(); i += 2) {
-            bytes.add(Byte.parseByte(hex.substring(i, i + 2), 16));
-        }
-        return bytes;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
