@@ -18,7 +18,7 @@ public final class Bech32mModule implements Bech32mTransformer {
             -1, 29, -1, 24, 13, 25,  9,  8, 23, -1, 18, 22, 31, 27, 19, -1,
              1,  0,  3, 16, 11, 28, 12, 14,  6,  4,  2, -1, -1, -1, -1, -1
     };
-    public static final int BENCH32M_MAX_LENGTH = 90;
+    public static final int BECH32M_MAX_LENGTH = 90;
 
     private int bech32mPolymod(List<Byte> expandedParts) {
         int c = 1;
@@ -68,6 +68,15 @@ public final class Bech32mModule implements Bech32mTransformer {
     }
 
     private void checkHrPart(String str) {
+        if (str.length() == 0) {
+            throw new Bech32mException("Invalid Bech32m to decode: Missing " +
+                    "human readable part");
+        }
+
+        if (str.length() >= 84) {
+            throw new Bech32mException("Invalid Bech32m to decode: Hrp too long");
+        }
+
         for (int index = 0; index < str.length(); index++) {
             if (str.charAt(index) < 33 || str.charAt(index) > 126) {
                 throw new Bech32mException("Invalid Bech32m to decode: Unsupported character " +
@@ -77,6 +86,10 @@ public final class Bech32mModule implements Bech32mTransformer {
     }
 
     private void checkDataPart(String str) {
+        if (str.length() < 6) {
+            throw new Bech32mException("Invalid Bech32m to decode: Data part too short");
+        }
+
         for (int index = 0; index < str.length(); index++) {
             if (CHARSET.indexOf(str.charAt(index)) == -1) {
                 throw new Bech32mException("Invalid Bech32m to decode: Unsupported character " +
@@ -86,27 +99,26 @@ public final class Bech32mModule implements Bech32mTransformer {
     }
 
     public void checkBech32mString(String str) {
-        if (str == null) throw new Bech32mException("Invalid Bech32m to decode: Null string");
+        if (str == null) {
+            throw new Bech32mException("Invalid Bech32m to decode: Null string");
+        }
+
+        if (str.length() > BECH32M_MAX_LENGTH) {
+            throw new Bech32mException("Invalid Bech32m to decode: String longer than " +
+                    BECH32M_MAX_LENGTH + " characters");
+        }
+
         if (!str.equals(str.toLowerCase(Locale.ENGLISH))
-                && !str.equals(str.toUpperCase(Locale.ENGLISH)))
+                && !str.equals(str.toUpperCase(Locale.ENGLISH))) {
             throw new Bech32mException("Invalid Bech32m to decode: Mixed case");
+        }
 
         str = str.toLowerCase(Locale.ENGLISH);
 
-        if (str.length() > BENCH32M_MAX_LENGTH)
-            throw new Bech32mException("Invalid Bech32m to decode: String longer than " +
-                    BENCH32M_MAX_LENGTH + " characters.");
-
         int separatorPos = str.lastIndexOf('1');
-
-        if (separatorPos == -1) throw new Bech32mException("Invalid Bech32m to decode: Missing " +
-                "separator");
-        if (separatorPos == 0) throw new Bech32mException("Invalid Bech32m to decode: Missing " +
-                "human readable part");
-        if (separatorPos >= 84) throw new Bech32mException("Invalid Bech32m to decode: String too" +
-                " long");
-        if (str.length() - separatorPos < 7) throw new Bech32mException("Invalid Bech32m to " +
-                "decode: Data part too short");
+        if (separatorPos == -1) {
+            throw new Bech32mException("Invalid Bech32m to decode: Missing separator");
+        }
 
         checkHrPart(str.substring(0, separatorPos));
         checkDataPart(str.substring(separatorPos + 1));
@@ -171,7 +183,14 @@ public final class Bech32mModule implements Bech32mTransformer {
 
     @Override
     public String encodeBech32mString(Bech32mIOData input) {
-        String hrPart = input.getHrPart().toLowerCase(Locale.ENGLISH);
+        String hrPart = input.getHrPart();
+        checkHrPart(hrPart);
+
+        if (!hrPart.equals(hrPart.toLowerCase(Locale.ENGLISH)) &&
+                !hrPart.equals(hrPart.toUpperCase(Locale.ENGLISH))) {
+            throw new Bech32mException("Provided hrp has mixed case");
+        }
+        hrPart = hrPart.toLowerCase();
 
         StringBuilder output = new StringBuilder(hrPart);
         output.append('1');
@@ -180,6 +199,11 @@ public final class Bech32mModule implements Bech32mTransformer {
         data.addAll(calculateChecksum(input));
         for (byte c: data) {
             output.append(CHARSET.charAt(c));
+        }
+
+        if (output.length() > BECH32M_MAX_LENGTH) {
+            throw new Bech32mException("Encoded bech32m string is longer than " +
+                    BECH32M_MAX_LENGTH + " characters.");
         }
 
         return output.toString();

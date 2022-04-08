@@ -1,6 +1,6 @@
 package cz.fi.muni.pa193.jumiru.ui;
 
-import static cz.fi.muni.pa193.jumiru.bech32m.Bech32mModule.BENCH32M_MAX_LENGTH;
+import static cz.fi.muni.pa193.jumiru.bech32m.Bech32mModule.BECH32M_MAX_LENGTH;
 
 import cz.fi.muni.pa193.jumiru.bech32m.Bech32mException;
 import cz.fi.muni.pa193.jumiru.bech32m.Bech32mIOData;
@@ -24,7 +24,7 @@ public final class UserInterfaceModule implements UserInterface {
         binary form. Each symbol 1/0 is regarded as 8 bits and the maximal amount of them is
         the maximal bech32m length -1 for smallest possible HRP and -1 for the separator.
     */
-    public static final int BIN_DATA_MAX_LENGTH = (BENCH32M_MAX_LENGTH - 2) * 8;
+    public static final int BIN_DATA_MAX_LENGTH = (BECH32M_MAX_LENGTH - 2) * 8;
 
     public UserInterfaceModule(final String[] args) {
         this.argParser = new ArgParser(args);
