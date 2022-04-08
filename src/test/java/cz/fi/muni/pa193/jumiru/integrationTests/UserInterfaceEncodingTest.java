@@ -2,6 +2,7 @@ package cz.fi.muni.pa193.jumiru.integrationTests;
 
 import cz.fi.muni.pa193.jumiru.ui.UserInterfaceModule;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -126,7 +127,7 @@ public class UserInterfaceEncodingTest {
         UserInterfaceModule module = new UserInterfaceModule(args);
 
         final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(myOut));
+        System.setErr(new PrintStream(myOut));
 
         module.entryPointWrapper();
         assertEquals("The HRP argument is missing" + System.lineSeparator()
@@ -165,13 +166,13 @@ public class UserInterfaceEncodingTest {
                 Arguments.of("hex", "36644e9c6502630ab3df1ff7df72657724de31590ba1f5f0ca48fb347788a6aef7df726"
                         + "57726630a59ff36644e9c6502630ab3df1ff7df72657724de31590ba1f5f0ca48fb347788a6aef7df726"
                         + "57726630a59ff"),
-                Arguments.of("hex", "36644e9c6502630ab3df1ff7df72657724de31590ba1f5f0ca48fb347788a6aef7df726"
-                        + "57726630a59ff"),
-                Arguments.of("bin", "01001010000101100000100100000100100000011100001000010010110001000110100"
-                        + "111011000010110011001111010111010110001001000000100001111011000011110000011000100"
-                        + "100110011000010011010111110010010100100101001100100110001111110010011001011010011"
-                        + "110001000010000100101011111100011010000111101100001111000001100010000001100010010"
-                        + "0110011000010011010111110010010100100101001100100110001111"),
+                Arguments.of("hex", "470fb2ebb5d1b924c25a9e7cadabc590ba1f5f0ca48fb347788a6aef7df72657726630a5"
+                        + "9ff7df72657724de31f7df72657724de31"),
+                Arguments.of("bin", "10100110100000001101111100011101110101100110100001110101001010100111010001"
+                        + "1000101110000000010101000101110110000000011001101110110101110000000011110000111000000"
+                        + "1110100000110001101100110000010011100010010111000110101101001011011010110100011001010"
+                        + "01011101001100010111110010111111011101010111110101101111011001110101001010100111010001"
+                        + "100010111000000001010100010111011000000001100110111011010111001100000000111100"),
                 Arguments.of("base64", "qdWcPfOOwRrusxbt2f6OONr49Msjlp6hiELn+ZEg5qnVnD3zjsEa7rMW7dn+jjja+PTL"
                         + "I5aeoYhC5/mRIOY=")
         );
@@ -186,7 +187,7 @@ public class UserInterfaceEncodingTest {
                 "arg",
                 input,
                 "stdout",
-                ""
+                "aaaa"
         };
         UserInterfaceModule module = new UserInterfaceModule(args);
 
@@ -194,10 +195,11 @@ public class UserInterfaceEncodingTest {
         System.setErr(new PrintStream(myOut));
 
         module.entryPointWrapper();
-        assertEquals("The data part exceeds maximal allowed length" + System.lineSeparator()
-                + helpMessage, myOut.toString());
+        assertEquals("Encoded bech32m string is longer than 90 characters."
+                + System.lineSeparator(), myOut.toString());
     }
 
+    @Test
     public void shouldFailOnInvalidMode() {
         String wrongMode = "dance";
         String[] args = {
@@ -215,14 +217,15 @@ public class UserInterfaceEncodingTest {
         System.setErr(new PrintStream(myOut));
 
         module.entryPointWrapper();
-        assertEquals("Argument 0(" + wrongMode + ") must be encode/decode"
+        assertEquals("Argument 0 (" + wrongMode + ") must be encode/decode"
                 + System.lineSeparator() + helpMessage, myOut.toString());
     }
 
+    @Test
     public void shouldFailOnInvalidInputFormat() {
         String wrongFormat = "bass64";
         String[] args = {
-                "dance",
+                "encode",
                 wrongFormat,
                 "arg",
                 "88388c736cf405b18569fab538188f5f5f",
@@ -236,9 +239,44 @@ public class UserInterfaceEncodingTest {
         System.setErr(new PrintStream(myOut));
 
         module.entryPointWrapper();
-        assertEquals("Argument 1(" + wrongFormat + ") must be bin/base64/hex"
+        assertEquals("Argument 1 (" + wrongFormat + ") must be bin/base64/hex"
                 + System.lineSeparator() + helpMessage, myOut.toString());
 
     }
+
+    private static Stream<Arguments> provideInvalidInputs() {
+        return Stream.of(
+                Arguments.of("hex", "a680df1dd668752a7462e015176019bb5c03c381/d06sffsdy36609c4b8d696d68ca5d"),
+                Arguments.of("hex", "66a2f51a10076126a41b06fiskcns3176126a41b0631"),
+                Arguments.of("hex", "671e7eea14cxvdb6765zz7101ddbbc6b7"),
+                Arguments.of("bin", "011001101010001011d1c10c1sc010cs0c0110100001000000000111011000010010011"),
+                Arguments.of("bin", "011001101010047573093000011101100001001001101010010"),
+                Arguments.of("base64", "4rdHFh%2BHYoS8oLdVvbUzEVqB8Lvm7kSPnuwF0AAABYQ%3D")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideInvalidInputs")
+    public void shouldFailOnInvalidInputData(String format, String input) {
+        String[] args = {
+                "encode",
+                format,
+                "arg",
+                input,
+                "stdout",
+                "aaa"
+        };
+
+        UserInterfaceModule module = new UserInterfaceModule(args);
+
+        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
+        System.setErr(new PrintStream(myOut));
+
+        module.entryPointWrapper();
+        assertEquals("The conversion of input data failed with for the following reason: " + input
+                + " is not a valid input and cannot be converted to Bech32m"
+                + System.lineSeparator() + helpMessage, myOut.toString());
+    }
+
 
 }
