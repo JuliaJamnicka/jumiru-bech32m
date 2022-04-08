@@ -57,7 +57,7 @@ public class UserInterfaceEncodingTest {
     }
 
 
-    public void checkEncodedBech32mOutput(String[] args, String input, String result) {
+    private void checkEncodedBech32mOutput(String[] args, String input, String result) {
         UserInterfaceModule module = new UserInterfaceModule(args);
 
         // catching standard output
@@ -109,6 +109,53 @@ public class UserInterfaceEncodingTest {
                 "1111111111"
         };
         checkEncodedBech32mOutput(args, input, result);
+    }
+
+
+    private void checkEmptyHRPartInput(String[] args) {
+        UserInterfaceModule module = new UserInterfaceModule(args);
+
+        // catching standard output
+        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(myOut));
+
+        module.entryPointWrapper();
+        assertEquals("The HRP argument is missing" + System.lineSeparator(), myOut.toString());
+    }
+
+    private static Stream<Arguments> provideMapOfFormatsAndData() {
+        return Stream.of(
+                Arguments.of("hex", "fe10d154"),
+                Arguments.of("bin", "0010110111110110111000001011010011001011"),
+                Arguments.of("base64", "fMSHuetY98YqS35ClKs7FMPgCH95PBJK7DZjqS0=")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideMapOfFormatsAndData")
+    public void noHRPartShouldFail(String format, String input) {
+        String[] args = {
+                "encode",
+                format,
+                "arg",
+                input,
+                "stdout"
+        };
+        checkEmptyHRPartInput(args);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideMapOfFormatsAndData")
+    public void EmptyHRPartShouldFail(String format, String input) {
+        String[] args = {
+                "encode",
+                format,
+                "arg",
+                input,
+                "stdout",
+                ""
+        };
+        checkEmptyHRPartInput(args);
     }
 
 
