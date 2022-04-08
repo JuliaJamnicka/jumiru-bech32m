@@ -1,5 +1,7 @@
 package cz.fi.muni.pa193.jumiru.ui;
 
+import static cz.fi.muni.pa193.jumiru.ui.UserInterfaceModule.BIN_DATA_MAX_LENGTH;
+
 public final class ArgParser {
     private final String[] args;
     private int argIndex = 0;
@@ -103,6 +105,10 @@ public final class ArgParser {
     private void parseDataPart() {
         argIndex++;
         hasNextArg("Data part argument is missing");
+        if (args[argIndex].length() > BIN_DATA_MAX_LENGTH) {
+            throw new UserInterfaceException("The data part in argument exceeds maximal allowed "
+                    + "length");
+        }
         inputData = args[argIndex];
     }
 

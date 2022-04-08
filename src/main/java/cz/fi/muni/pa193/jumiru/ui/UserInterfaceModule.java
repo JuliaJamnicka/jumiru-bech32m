@@ -19,6 +19,12 @@ import java.util.Scanner;
 
 public final class UserInterfaceModule implements UserInterface {
     private final ArgParser argParser;
+    /*
+        The biggest possible legitimate data prt length should always be the data part in its
+        binary form. Each symbol 1/0 is regarded as 8 bits and the maximal amount of them is
+        the maximal bech32m length -1 for smallest possible HRP and -1 for the separator.
+    */
+    public static final int BIN_DATA_MAX_LENGTH = (BENCH32M_MAX_LENGTH - 2) * 8;
 
     public UserInterfaceModule(final String[] args) {
         this.argParser = new ArgParser(args);
@@ -27,15 +33,9 @@ public final class UserInterfaceModule implements UserInterface {
     private String readDataFromFile(final String filename) {
         File inputFile =  new File(filename);
         if (!inputFile.isFile())
-            throw new UserInterfaceException("The provided input file does not exist");
-        /*
-            The biggest possible legitimate file here should always be the data part in its binary
-            form. This is binary data in regular text file, so each symbol 1/0 is 8 bytes and the
-            maximal amount of them is the maximal bech32m length -1 for smallest possible HRP and
-            -1 for the separator.
-         */
-        int binaryDataPartMaxLength = (BENCH32M_MAX_LENGTH - 2) * 8;
-        if (inputFile.length() > binaryDataPartMaxLength) {
+            throw new UserInterfaceException("The provided input file does not exist or cannot be "
+                    + "accessed");
+        if (inputFile.length() > BIN_DATA_MAX_LENGTH) {
             throw new UserInterfaceException("The file exceeds maximal allowed length");
         }
         try (FileInputStream fileInputStream = new FileInputStream(inputFile)) {
@@ -58,6 +58,10 @@ public final class UserInterfaceModule implements UserInterface {
                 Scanner scanner = new Scanner(System.in);
                 argParser.setInputData(scanner.nextLine());
                 scanner.close();
+                if (argParser.getInputData().length() > BIN_DATA_MAX_LENGTH) {
+                    throw new UserInterfaceException("The data part exceeds maximal allowed "
+                            + "length");
+                }
             }
             case FILE -> argParser.setInputData(readDataFromFile(argParser.getInputFileName()));
         }
