@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * Representation of input data to be encoded/output data that were decoded.
  */
-public class Bech32mIOData {
+public final class Bech32mIOData {
 
     /**
      * Human-readable part of data.
@@ -23,23 +23,6 @@ public class Bech32mIOData {
     public Bech32mIOData(String hrPart, List<Byte> dataPart) {
         this.hrPart = hrPart;
         this.dataPart = new ArrayList<>(dataPart);
-    }
-
-    public Bech32mIOData(String hrPart, String hexDataPart) {
-        this.hrPart = hrPart;
-        this.dataPart = convertHexToBytes(hexDataPart);
-    }
-
-    private List<Byte> convertHexToBytes(String hex) {
-        ArrayList<Byte> bytes = new ArrayList<>();
-        if (hex.length() % 2 == 1) {
-            hex = hex.concat("0");
-        }
-        bytes.ensureCapacity(hex.length() / 2);
-        for (int i = 0; i < hex.length(); i += 2) {
-            bytes.add(Byte.parseByte(hex.substring(i, i + 2), 16));
-        }
-        return bytes;
     }
 
     @Override
