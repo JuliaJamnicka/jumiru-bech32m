@@ -123,15 +123,14 @@ public class UserInterfaceEncodingTest {
         );
     }
 
-    private void checkEmptyHRPartInput(String[] args) {
+    private void checkEmptyHRPartInput(String[] args, String expected) {
         UserInterfaceModule module = new UserInterfaceModule(args);
 
         final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
         System.setErr(new PrintStream(myOut));
 
         module.entryPointWrapper();
-        assertEquals("The HRP argument is missing" + System.lineSeparator()
-                + helpMessage, myOut.toString());
+        assertEquals(expected, myOut.toString());
     }
 
     @ParameterizedTest
@@ -144,7 +143,8 @@ public class UserInterfaceEncodingTest {
                 input,
                 "stdout"
         };
-        checkEmptyHRPartInput(args);
+        checkEmptyHRPartInput(args, "The HRP argument is missing" + System.lineSeparator()
+                + helpMessage);
     }
 
     @ParameterizedTest
@@ -158,7 +158,8 @@ public class UserInterfaceEncodingTest {
                 "stdout",
                 ""
         };
-        checkEmptyHRPartInput(args);
+        checkEmptyHRPartInput(args, "Invalid Bech32m to decode: Missing human readable part"
+            + System.lineSeparator());
     }
 
     private static Stream<Arguments> provideMapOfFormatsAndTooLongData() {
@@ -239,7 +240,7 @@ public class UserInterfaceEncodingTest {
         System.setErr(new PrintStream(myOut));
 
         module.entryPointWrapper();
-        assertEquals("Argument 1 (" + wrongFormat + ") must be bin/base64/hex"
+        assertEquals("Argument 1(" + wrongFormat + ") must be bin/base64/hex"
                 + System.lineSeparator() + helpMessage, myOut.toString());
 
     }
