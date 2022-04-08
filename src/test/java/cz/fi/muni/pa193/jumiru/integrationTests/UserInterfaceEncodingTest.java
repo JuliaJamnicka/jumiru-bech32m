@@ -13,6 +13,8 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UserInterfaceEncodingTest {
+    private static final String helpMessage = System.lineSeparator() + "For correct usage, see README.md file" +
+            System.lineSeparator();
 
     private static Stream<Arguments> provideValidHexEncodedInputs() {
         return Stream.of(
@@ -112,23 +114,23 @@ public class UserInterfaceEncodingTest {
     }
 
 
-    private void checkEmptyHRPartInput(String[] args) {
-        UserInterfaceModule module = new UserInterfaceModule(args);
-
-        // catching standard output
-        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(myOut));
-
-        module.entryPointWrapper();
-        assertEquals("The HRP argument is missing" + System.lineSeparator(), myOut.toString());
-    }
-
     private static Stream<Arguments> provideMapOfFormatsAndData() {
         return Stream.of(
                 Arguments.of("hex", "fe10d154"),
                 Arguments.of("bin", "0010110111110110111000001011010011001011"),
                 Arguments.of("base64", "fMSHuetY98YqS35ClKs7FMPgCH95PBJK7DZjqS0=")
         );
+    }
+
+    private void checkEmptyHRPartInput(String[] args) {
+        UserInterfaceModule module = new UserInterfaceModule(args);
+
+        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(myOut));
+
+        module.entryPointWrapper();
+        assertEquals("The HRP argument is missing" + System.lineSeparator()
+                + helpMessage, myOut.toString());
     }
 
     @ParameterizedTest
@@ -158,5 +160,85 @@ public class UserInterfaceEncodingTest {
         checkEmptyHRPartInput(args);
     }
 
+    private static Stream<Arguments> provideMapOfFormatsAndTooLongData() {
+        return Stream.of(
+                Arguments.of("hex", "36644e9c6502630ab3df1ff7df72657724de31590ba1f5f0ca48fb347788a6aef7df726"
+                        + "57726630a59ff36644e9c6502630ab3df1ff7df72657724de31590ba1f5f0ca48fb347788a6aef7df726"
+                        + "57726630a59ff"),
+                Arguments.of("hex", "36644e9c6502630ab3df1ff7df72657724de31590ba1f5f0ca48fb347788a6aef7df726"
+                        + "57726630a59ff"),
+                Arguments.of("bin", "01001010000101100000100100000100100000011100001000010010110001000110100"
+                        + "111011000010110011001111010111010110001001000000100001111011000011110000011000100"
+                        + "100110011000010011010111110010010100100101001100100110001111110010011001011010011"
+                        + "110001000010000100101011111100011010000111101100001111000001100010000001100010010"
+                        + "0110011000010011010111110010010100100101001100100110001111"),
+                Arguments.of("base64", "qdWcPfOOwRrusxbt2f6OONr49Msjlp6hiELn+ZEg5qnVnD3zjsEa7rMW7dn+jjja+PTL"
+                        + "I5aeoYhC5/mRIOY=")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideMapOfFormatsAndTooLongData")
+    public void shouldFailOnTooLongInput(String format, String input) {
+        String[] args = {
+                "encode",
+                format,
+                "arg",
+                input,
+                "stdout",
+                ""
+        };
+        UserInterfaceModule module = new UserInterfaceModule(args);
+
+        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
+        System.setErr(new PrintStream(myOut));
+
+        module.entryPointWrapper();
+        assertEquals("The data part exceeds maximal allowed length" + System.lineSeparator()
+                + helpMessage, myOut.toString());
+    }
+
+    public void shouldFailOnInvalidMode() {
+        String wrongMode = "dance";
+        String[] args = {
+                wrongMode,
+                "hex",
+                "arg",
+                "88388c736cf405b18569fab538188f5f5f",
+                "stdout",
+                ""
+        };
+
+        UserInterfaceModule module = new UserInterfaceModule(args);
+
+        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
+        System.setErr(new PrintStream(myOut));
+
+        module.entryPointWrapper();
+        assertEquals("Argument 0(" + wrongMode + ") must be encode/decode"
+                + System.lineSeparator() + helpMessage, myOut.toString());
+    }
+
+    public void shouldFailOnInvalidInputFormat() {
+        String wrongFormat = "bass64";
+        String[] args = {
+                "dance",
+                wrongFormat,
+                "arg",
+                "88388c736cf405b18569fab538188f5f5f",
+                "stdout",
+                ""
+        };
+
+        UserInterfaceModule module = new UserInterfaceModule(args);
+
+        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
+        System.setErr(new PrintStream(myOut));
+
+        module.entryPointWrapper();
+        assertEquals("Argument 1(" + wrongFormat + ") must be bin/base64/hex"
+                + System.lineSeparator() + helpMessage, myOut.toString());
+
+    }
 
 }
