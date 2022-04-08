@@ -68,7 +68,7 @@ public class UserInterfaceEncodingTest {
         System.setOut(new PrintStream(myOut));
 
         module.entryPointWrapper();
-        assertEquals("Encoded bech32m string is: " + result + System.lineSeparator(), myOut.toString());
+        assertEquals(result + System.lineSeparator(), myOut.toString());
     }
 
 
