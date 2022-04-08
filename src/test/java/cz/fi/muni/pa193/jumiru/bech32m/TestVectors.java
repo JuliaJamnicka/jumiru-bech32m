@@ -6,7 +6,7 @@ import cz.fi.muni.pa193.jumiru.converter.InputConverter;
 public class TestVectors {
     private static final InputConverter INPUT_CONVERTER = new DataInputConverter();
 
-    public static final String[] VALID_BECH32M = {
+    static final String[] VALID_BECH32M = {
             "abcdef140x77khk82w",
             "test1wejkxar0wg64ekuu",
             "A1LQFN3A",
@@ -17,7 +17,7 @@ public class TestVectors {
             "split1checkupstagehandshakeupstreamerranterredcaperredlc445v"
     };
 
-    public static final Bech32mIOData[] VALID_BECH32_DECODINGS = {
+    static final Bech32mIOData[] VALID_BECH32_DECODINGS = {
             new Bech32mIOData("abcdef", INPUT_CONVERTER.convertFromHex("abcdef")),
             new Bech32mIOData("test", INPUT_CONVERTER.convertFromHex("766563746f72")),
             new Bech32mIOData("a", INPUT_CONVERTER.convertFromHex("")),
@@ -31,7 +31,7 @@ public class TestVectors {
                     "85fb6cf03058f3dde463ecd7918f2dc743918f2d"))
     };
 
-    public static final String[] VALID_CORRECTED_BECH32M = {
+    static final String[] VALID_CORRECTED_BECH32M = {
             "A1LQFN3A",
             "a1lqfn3a",
             "an83characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11sg7hg6",
@@ -42,7 +42,7 @@ public class TestVectors {
             "?1v759aa"
     };
 
-    public static final String[] INVALID_CORRECTS_TO_VALID_BECH32M = {
+    static final String[] INVALID_CORRECTS_TO_VALID_BECH32M = {
             // error in hrp
             "B1LQFN3A",
             "b1lqfn3a",
@@ -55,7 +55,7 @@ public class TestVectors {
             "!1v759aa"
     };
 
-    public static final String[] INVALID_BECH32M = {
+    static final String[] INVALID_BECH32M = {
             " 1xj0phk",          // HRP character out of range
             (char)0x7F + "1g6xzxy",  // HRP character out of range
             (char)0x80 + "1vctc34",  // HRP character out of range
@@ -74,7 +74,7 @@ public class TestVectors {
             "abcdef1l7auM6echk45nj3s0wdvt2fg8x9yrzpqzd3ryx",  // Mixed case data part
     };
 
-    public static final String[] INVALID_BECH32M_CHECKSUM = {
+    static final String[] INVALID_BECH32M_CHECKSUM = {
             "M1VUXWEZ",          // Checksum calculated with uppercase form of HRP
             // valid bech32m strings with modified checksum
             "an83characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11sg7hg5",

@@ -2,6 +2,7 @@ package cz.fi.muni.pa193.jumiru.bech32m;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public final class Bech32mModule implements Bech32mTransformer {
 
@@ -17,14 +18,14 @@ public final class Bech32mModule implements Bech32mTransformer {
             -1, 29, -1, 24, 13, 25,  9,  8, 23, -1, 18, 22, 31, 27, 19, -1,
              1,  0,  3, 16, 11, 28, 12, 14,  6,  4,  2, -1, -1, -1, -1, -1
     };
-    public static int BENCH32M_MAX_LENGTH = 80;
+    public static final int BENCH32M_MAX_LENGTH = 80;
 
     private int bech32mPolymod(List<Byte> expandedParts) {
         int c = 1;
         int[] GEN = {0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3};
         for (byte value: expandedParts) {
             byte c0 = (byte) (c >>> 25);
-            c = ((c & 0x1ffffff) << 5) ^ value;
+            c = ((c & 0x1ffffff) << 5) ^ (value & 0xff);
             int p = 1;
             for (int i = 0; i<5; i++) {
                 if ((c0 & p) == p) {
@@ -37,7 +38,7 @@ public final class Bech32mModule implements Bech32mTransformer {
     }
 
     private List<Byte> expandHrPart(String hrPart) {
-        hrPart = hrPart.toLowerCase();
+        hrPart = hrPart.toLowerCase(Locale.ENGLISH);
         ArrayList<Byte> expandedHrPart = new ArrayList<>();
         expandedHrPart.ensureCapacity(2 * hrPart.length() + 1);
         for (int i = 0; i < hrPart.length(); i++) {
@@ -68,10 +69,11 @@ public final class Bech32mModule implements Bech32mTransformer {
 
     public void checkBech32mString(String str) {
         if (str == null) throw new Bech32mException("Invalid Bech32m to decode: Null string");
-        if (!str.equals(str.toLowerCase()) && !str.equals(str.toUpperCase()))
+        if (!str.equals(str.toLowerCase(Locale.ENGLISH))
+                && !str.equals(str.toUpperCase(Locale.ENGLISH)))
             throw new Bech32mException("Invalid Bech32m to decode: Mixed case");
 
-        str = str.toLowerCase();
+        str = str.toLowerCase(Locale.ENGLISH);
 
         boolean separatorFound = false;
         int separatorPos = 0;
@@ -108,7 +110,7 @@ public final class Bech32mModule implements Bech32mTransformer {
 
         int separatorPos = str.lastIndexOf('1');
 
-        String hrPart = str.substring(0, separatorPos).toLowerCase();
+        String hrPart = str.substring(0, separatorPos).toLowerCase(Locale.ENGLISH);
         List<Byte> data = decodeDataPart(str.substring(separatorPos + 1));
 
         if (!verifyChecksum(hrPart, data)) {
@@ -162,7 +164,7 @@ public final class Bech32mModule implements Bech32mTransformer {
 
     @Override
     public String encodeBech32mString(Bech32mIOData input) {
-        String hrPart = input.getHrPart().toLowerCase();
+        String hrPart = input.getHrPart().toLowerCase(Locale.ENGLISH);
 
         StringBuilder output = new StringBuilder(hrPart);
         output.append('1');
