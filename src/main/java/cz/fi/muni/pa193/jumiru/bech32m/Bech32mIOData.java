@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * Representation of input data to be encoded/output data that were decoded.
  */
-public class Bech32mIOData {
+public final class Bech32mIOData {
 
     /**
      * Human-readable part of data.

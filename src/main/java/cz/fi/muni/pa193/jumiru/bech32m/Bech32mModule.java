@@ -18,6 +18,7 @@ public final class Bech32mModule implements Bech32mTransformer {
             -1, 29, -1, 24, 13, 25,  9,  8, 23, -1, 18, 22, 31, 27, 19, -1,
              1,  0,  3, 16, 11, 28, 12, 14,  6,  4,  2, -1, -1, -1, -1, -1
     };
+
     public static final int BECH32M_MAX_LENGTH = 90;
 
     private int bech32mPolymod(List<Byte> expandedParts) {
@@ -27,7 +28,7 @@ public final class Bech32mModule implements Bech32mTransformer {
             byte c0 = (byte) (c >>> 25);
             c = ((c & 0x1ffffff) << 5) ^ (value & 0xff);
             int p = 1;
-            for (int i = 0; i<5; i++) {
+            for (int i = 0; i < 5; i++) {
                 if ((c0 & p) == p) {
                     c ^= generator[i];
                 }
@@ -60,6 +61,7 @@ public final class Bech32mModule implements Bech32mTransformer {
         return data;
     }
 
+    @Override
     public boolean verifyChecksum(String hrPart, List<Byte> data) {
         List<Byte> expandedHrPart = expandHrPart(hrPart);
         expandedHrPart.addAll(data);
@@ -94,6 +96,7 @@ public final class Bech32mModule implements Bech32mTransformer {
         }
     }
 
+    @Override
     public void checkBech32mString(String str) {
         if (str == null) {
             throw new Bech32mException("Invalid Bech32m to decode: Null string");
@@ -120,6 +123,7 @@ public final class Bech32mModule implements Bech32mTransformer {
         checkDataPart(str.substring(separatorPos + 1));
     }
 
+    @Override
     public Bech32mIOData decodeBech32mString(String str, boolean performErrorCorrection) {
         checkBech32mString(str);
 
@@ -212,6 +216,7 @@ public final class Bech32mModule implements Bech32mTransformer {
         return output.toString();
     }
 
+    @Override
     public List<Byte> calculateChecksum(Bech32mIOData input) {
         List<Byte> data = expandHrPart(input.getHrPart());
         data.addAll(input.getDataPart());
