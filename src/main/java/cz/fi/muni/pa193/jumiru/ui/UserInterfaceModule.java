@@ -148,7 +148,8 @@ public final class UserInterfaceModule implements UserInterface {
             entryPoint();
             return 0;
         } catch (UserInterfaceException exc) {
-            System.err.println(exc.getMessage() + "\n\nFor correct usage, see README.md file");
+            System.err.println(exc.getMessage() + System.lineSeparator() + System.lineSeparator()
+                    + "For correct usage, see README.md file");
             return 1;
         } catch (Bech32mException exc) {
             System.err.println(exc.getMessage());
