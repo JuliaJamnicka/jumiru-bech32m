@@ -59,7 +59,8 @@ public class TestVectors {
             " 1xj0phk",          // HRP character out of range
             (char)0x7F + "1g6xzxy",  // HRP character out of range
             (char)0x80 + "1vctc34",  // HRP character out of range
-            "an84characterslonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11d6pts4", // overall max length exceeded
+            "an84characterslonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11d6pts4", // too long hrp
+            "an84characterslonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumbe11pd6pts4", // overall max length exceeded
             "qyrz8wqd2c9m",      // No separator character
             "1qyrz8wqd2c9m",     // Empty HRP
             "y1b0jsk6g",         // Invalid data character
