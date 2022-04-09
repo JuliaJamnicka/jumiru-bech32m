@@ -18,7 +18,7 @@ public final class ArgParser {
     private boolean errorDetection = false;
 
     public ArgParser(final String[] args) {
-        this.args = args;
+        this.args = args.clone();
     }
 
     public boolean isEncode() {
