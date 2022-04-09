@@ -6,11 +6,14 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Path;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static java.nio.file.Files.deleteIfExists;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Bech32mDecodingTest {
     private static Stream<Arguments> provideValidHexEncodedInputs() {
@@ -161,4 +164,31 @@ public class Bech32mDecodingTest {
         module.entryPointWrapper();
         assertTrue(myOut.toString().contains(corrected));
     }
+
+    @ParameterizedTest
+    @MethodSource("provideValidHexEncodedInputs")
+    public void shouldCreateOutputFile(String result, String input) {
+        String fileName = "output.txt";
+        String[] args = {
+                "decode",
+                "hex",
+                "arg",
+                input,
+                "file",
+                fileName
+        };
+        UserInterfaceModule module = new UserInterfaceModule(args);
+
+        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(myOut));
+
+        module.entryPointWrapper();
+        try {
+            assertTrue(deleteIfExists(Path.of(fileName)));
+        } catch (IOException exception) {
+            fail();
+        }
+    }
+
+
 }

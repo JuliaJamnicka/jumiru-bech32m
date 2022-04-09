@@ -108,6 +108,28 @@ public class UserInterfaceTest {
     }
 
     @Test
+    public void shouldFailOnInvalidOutput() {
+        String wrongOutput = "error";
+        String[] args = {
+                "encode",
+                "bin",
+                "arg",
+                "88388c736cf405b18569fab538188f5f5f",
+                wrongOutput
+        };
+
+        UserInterfaceModule module = new UserInterfaceModule(args);
+
+        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
+        System.setErr(new PrintStream(myOut));
+
+        module.entryPointWrapper();
+        assertEquals("Argument 4(" + wrongOutput + ") must be arg/stdin/file/stdout"
+                + System.lineSeparator() + helpMessage, myOut.toString());
+
+    }
+
+    @Test
     public void shouldFailOnInvalidErrorDetect() {
         String[] args = {
                 "decode",

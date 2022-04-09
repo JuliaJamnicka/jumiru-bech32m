@@ -6,11 +6,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.*;
+import java.nio.file.Path;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static java.nio.file.Files.createFile;
+import static java.nio.file.Files.deleteIfExists;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Bech32mEncodingTest {
     private static final String helpMessage = System.lineSeparator() + "For correct usage, see README.md file" +
@@ -187,5 +189,67 @@ public class Bech32mEncodingTest {
                 + System.lineSeparator() + helpMessage, myOut.toString());
     }
 
+    @ParameterizedTest
+    @MethodSource("provideValidBase64EncodedInputs")
+    public void shoudldReadInputFromFile(String input, String result) {
+        try {
+            FileOutputStream outputStream = new FileOutputStream(input);
+            byte[] strToBytes = input.getBytes();
+            outputStream.write(strToBytes);
 
+            outputStream.close();
+        } catch (Exception exception) {
+            fail();
+        }
+
+        String[] args = {
+                "encode",
+                "base64",
+                "file",
+                input,
+                "stdout",
+                "1111111111"
+        };
+
+        UserInterfaceModule module = new UserInterfaceModule(args);
+
+        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(myOut));
+
+        module.entryPointWrapper();
+        assertEquals(result + System.lineSeparator(), myOut.toString());
+        try {
+            assertTrue(deleteIfExists(Path.of(input)));
+        } catch (IOException exception) {
+            fail();
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideValidHexEncodedInputs")
+    public void shouldReadInputFromStandardInput(String input, String result) {
+
+        String[] args = {
+                "encode",
+                "hex",
+                "stdin",
+                "stdout",
+                "abcdef"
+        };
+
+        UserInterfaceModule module = new UserInterfaceModule(args);
+
+        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(myOut));
+
+        String userInput = input + System.lineSeparator();
+        ByteArrayInputStream byteStream = new ByteArrayInputStream(userInput.getBytes());
+        System.setIn(byteStream);
+
+        module.entryPointWrapper();
+
+        assertEquals("Enter the data part to be en/decoded:"
+                + System.lineSeparator() + result + System.lineSeparator(),
+                myOut.toString());
+    }
 }
