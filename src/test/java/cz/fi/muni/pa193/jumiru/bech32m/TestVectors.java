@@ -39,7 +39,11 @@ class TestVectors {
             "abcdef1l7aum6echk45nj3s0wdvt2fg8x9yrzpqzd3ryx",
             "11llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllludsr8",
             "split1checkupstagehandshakeupstreamerranterredcaperredlc445v",
-            "?1v759aa"
+            "?1v759aa",
+            "split1checkupstagehandshakeupstreamerranterredcaperredlc445v",
+            "?1v759aa",
+            "an83characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11sg7hg6",
+            "abcdef140x77khk82w"
     };
 
     static final String[] INVALID_CORRECTS_TO_VALID_BECH32M = {
@@ -52,7 +56,12 @@ class TestVectors {
             "abcdef1p7aum6echk45nj3s0wdvt2fg8x9yrzpqzd3ryx",
             "11lllllllllllllllllllllllllllllllllllllllllllllllllllrllllllllllllllllllllllllllllllludsr8",
             "split1cheqkupstagehandshakeupstreamerranterredcaperredlc445v",
-            "!1v759aa"
+            "!1v759aa",
+            // error in data part (checksum)
+            "split1checkupstagehandshakeupstreamerranterredcaperredlc845v",
+            "?1v759az",
+            "an83characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11sg7h56",
+            "abcdef140x77khk82p"
     };
 
     static final String[] INVALID_BECH32M = {

@@ -164,7 +164,7 @@ public final class Bech32mModule implements Bech32mTransformer {
     private List<String> findPossibleErrorCorrectionsInDataPart(String hrPart, List<Byte> data) {
         List<String> candidates = new ArrayList<>();
         List<Byte> dataPart = new ArrayList<>(data);
-        for (int i = 0; i < dataPart.size() - 6; i++) {
+        for (int i = 0; i < dataPart.size(); i++) {
             byte originalValue = dataPart.get(i);
             for (byte replacement = 0; replacement < 32; replacement++) {
                 if (replacement == originalValue) {
