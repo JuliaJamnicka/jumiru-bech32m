@@ -1,21 +1,16 @@
 package cz.fi.muni.pa193.jumiru.integrationTests;
 
-import cz.fi.muni.pa193.jumiru.bech32m.TestVectors;
 import cz.fi.muni.pa193.jumiru.ui.UserInterfaceModule;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Locale;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import cz.fi.muni.pa193.jumiru.bech32m.TestVectors.*;
 
 public class Bech32mDecodingTest {
     private static Stream<Arguments> provideValidHexEncodedInputs() {
