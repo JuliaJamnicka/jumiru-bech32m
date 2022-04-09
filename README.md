@@ -4,6 +4,7 @@ There are two modes this application can run in, encode and decode, which have a
 
 For security reasons, running the application in its own dedicated directory it is highly recommended (or specifying its working directory to a one dedicated to this application). Should it be run by an untrusted user, it must be ensured that the user cannot set JVM arguments.
 
+The application also allows for error detection, which can be enabled by appending "errdetect" to any valid decoding command. If an error occurs during the decoding, the application attempts to find a similar input (at most one symbol difference) that would decode correctly and displays it to the user.  
 
 ### Usage:
 
@@ -27,7 +28,7 @@ java - jar jumiru-1.0.jar decode **data_format input_destination output_destinat
 
 *Note: Input from stdin must  be terminated by a newline*
 
-*Note: file_name must be in the current working directory to avoid arbitrary file writes/reads*
+*Note: file_name must be in the current working directory (or its subdirectory)*
 
 ### Example usage
 
@@ -46,11 +47,11 @@ java - jar jumiru-1.0.jar decode **data_format input_destination output_destinat
   `encode base64 file "input1.txt" stdout a`
 
 
-* Decode A1LQFN3A read from argument to base64, output to stdout.
+* Decode bech32m string read from argument to base64, output to stdout.
   
-  `decode base64 arg A1LQFN3A stdout`
+  `decode base64 arg abcdef1l7aum6echk45nj3s0wdvt2fg8x9yrzpqzd3ryx stdout`
 
 
 * Decode data from "input2.txt" to binary data and enable error detection, output to stdout.
 
-  `binary binary file "input2.txt" stdout`
+  `decode bin file "input2.txt" stdout errdetect`

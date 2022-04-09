@@ -24,7 +24,7 @@ import java.util.Scanner;
 
 public final class UserInterfaceModule implements UserInterface {
     private final ArgParser argParser;
-    private final String BASE_DIR = System.getProperty("user.dir");
+    private static final String BASE_DIR = System.getProperty("user.dir");
     /*
         The biggest possible legitimate data prt length should always be the data part in its
         binary form. Each symbol 1/0 is regarded as 8 bits and the maximal amount of them is
