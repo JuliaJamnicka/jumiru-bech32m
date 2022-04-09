@@ -1,49 +1,56 @@
 package cz.fi.muni.pa193.jumiru.converter;
 
+import static cz.fi.muni.pa193.jumiru.converter.ConverterUtils.convertBits;
+import static cz.fi.muni.pa193.jumiru.converter.ConverterUtils.padZerosToString;
+
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import static cz.fi.muni.pa193.jumiru.converter.ConverterUtils.*;
+public final class DataInputConverter implements InputConverter {
+    private static final int BIN_BYTE_LENGTH = 8;
+    private static final int HEX_BYTE_LENGTH = 2;
+    private static final int BECH32_BYTE_LENGTH = 5;
 
-
-public class DataInputConverter implements InputConverter {
-
-    public List<Byte> convertFromBinary(String bech32mDataInput) {
-        String data = padZerosToString(bech32mDataInput, 8);
+    public List<Byte> convertFromBinary(final String bech32mDataInput) {
+        String data = padZerosToString(bech32mDataInput, BIN_BYTE_LENGTH);
 
         List<Byte> byteArray = new ArrayList<>();
 
         try {
-            for (int i = 0; i < data.length(); i += 8) {
-                int decimal = Integer.parseInt(data.substring(i, i + 8), 2);
+            for (int i = 0; i < data.length(); i += BIN_BYTE_LENGTH) {
+                String byteSubstring = data.substring(i, i + BIN_BYTE_LENGTH);
+
+                int decimal = Integer.parseInt(byteSubstring, 2);
                 byteArray.add((byte) decimal);
             }
         } catch (NumberFormatException e) {
             throw new DataInputException(bech32mDataInput);
         }
 
-        return convertBits(byteArray, 8, 5, true);
+        return convertBits(byteArray, BIN_BYTE_LENGTH, BECH32_BYTE_LENGTH, true);
     }
 
-    public List<Byte> convertFromHex(String bech32mDataInput) {
-        String data = padZerosToString(bech32mDataInput, 2);
+    public List<Byte> convertFromHex(final String bech32mDataInput) {
+        String data = padZerosToString(bech32mDataInput, HEX_BYTE_LENGTH);
 
         List<Byte> byteArray = new ArrayList<>();
 
         try {
-            for (int i = 0; i < data.length(); i += 2) {
-                int decimal = Integer.parseInt(data.substring(i, i + 2), 16);
+            for (int i = 0; i < data.length(); i += HEX_BYTE_LENGTH) {
+                String byteSubstring = data.substring(i, i + HEX_BYTE_LENGTH);
+
+                int decimal = Integer.parseInt(byteSubstring, 16);
                 byteArray.add((byte) decimal);
             }
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new DataInputException(bech32mDataInput);
         }
 
-        return convertBits(byteArray, 8, 5, true);
+        return convertBits(byteArray, BIN_BYTE_LENGTH, BECH32_BYTE_LENGTH, true);
     }
 
-    public List<Byte> convertFromBase64(String bech32mDataInput) {
+    public List<Byte> convertFromBase64(final String bech32mDataInput) {
         byte[] decoded;
 
         try {
@@ -57,7 +64,6 @@ public class DataInputConverter implements InputConverter {
             bytes.add(b);
         }
 
-        return convertBits(bytes, 8, 5, true);
+        return convertBits(bytes, BIN_BYTE_LENGTH, BECH32_BYTE_LENGTH, true);
     }
-    
 }
