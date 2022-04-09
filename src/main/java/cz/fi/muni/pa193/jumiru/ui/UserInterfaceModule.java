@@ -13,6 +13,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -20,6 +24,7 @@ import java.util.Scanner;
 
 public final class UserInterfaceModule implements UserInterface {
     private final ArgParser argParser;
+    private final String BASE_DIR = System.getProperty("user.dir");
     /*
         The biggest possible legitimate data prt length should always be the data part in its
         binary form. Each symbol 1/0 is regarded as 8 bits and the maximal amount of them is
@@ -31,8 +36,20 @@ public final class UserInterfaceModule implements UserInterface {
         this.argParser = new ArgParser(args);
     }
 
-    private String readDataFromFile(final String filename) {
-        File inputFile =  new File(filename);
+    private void validateFilePath (final String filePath){
+        try {
+            if (!Paths.get(filePath).toAbsolutePath().normalize().startsWith(BASE_DIR))
+                throw new UserInterfaceException("The file path (" + filePath + ") must be in the"
+                        + " current working directory: " + BASE_DIR);
+        } catch (InvalidPathException e) {
+            throw new UserInterfaceException("The file path (" + filePath + ") contains invalid"
+                    + " characters");
+        }
+    }
+
+    private String readDataFromFile(final String inputFileName) {
+        validateFilePath(inputFileName);
+        File inputFile =  new File(inputFileName);
         if (!inputFile.isFile())
             throw new UserInterfaceException("The provided input file does not exist or cannot be "
                     + "accessed");
@@ -100,6 +117,16 @@ public final class UserInterfaceModule implements UserInterface {
     }
 
     private void fileWriteResult(final String outputFileName, final String result) {
+        validateFilePath(outputFileName);
+
+        Path outputPath = Paths.get(outputFileName).toAbsolutePath().normalize();
+        try {
+            Files.createDirectories(outputPath.getParent());
+        } catch (IOException e) {
+            throw new UserInterfaceException("Creation of directories leading to output file "
+                    + "failed");
+        }
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName))) {
             writer.write(result);
         } catch (IOException e) {
