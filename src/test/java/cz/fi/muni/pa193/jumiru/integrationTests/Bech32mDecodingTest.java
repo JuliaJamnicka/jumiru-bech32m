@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import static java.nio.file.Files.deleteIfExists;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class Bech32mDecodingTest {
+class Bech32mDecodingTest {
     private static Stream<Arguments> provideValidHexEncodedInputs() {
         return Stream.of(
                 Arguments.of("8b08e67499ba084cb632fd291d0efdaa1139372b71dbfc7bf7",
@@ -70,7 +70,7 @@ public class Bech32mDecodingTest {
 
     @ParameterizedTest
     @MethodSource("provideValidHexEncodedInputs")
-    public void shouldReturnEncodedHex(String result, String input) {
+    void shouldReturnEncodedHex(String result, String input) {
         String[] args = {
                 "decode",
                 "hex",
@@ -83,7 +83,7 @@ public class Bech32mDecodingTest {
 
     @ParameterizedTest
     @MethodSource("provideValidBinEncodedInputs")
-    public void shouldReturnEncodedBin(String result, String input) {
+    void shouldReturnEncodedBin(String result, String input) {
         String[] args = {
                 "decode",
                 "bin",
@@ -96,7 +96,7 @@ public class Bech32mDecodingTest {
 
     @ParameterizedTest
     @MethodSource("provideValidBase64EncodedInputs")
-    public void shouldReturnEncodedBase64(String result, String input) {
+    void shouldReturnEncodedBase64(String result, String input) {
         String[] args = {
                 "decode",
                 "base64",
@@ -125,7 +125,7 @@ public class Bech32mDecodingTest {
 
     @ParameterizedTest
     @MethodSource("provideInvalidBech32mAndCorrections")
-    public void shouldFailOnInvalidBech32mInputChecksum(String input, String __) {
+    void shouldFailOnInvalidBech32mInputChecksum(String input, String __) {
         String[] args = {
                 "decode",
                 "hex",
@@ -146,7 +146,7 @@ public class Bech32mDecodingTest {
 
     @ParameterizedTest
     @MethodSource("provideInvalidBech32mAndCorrections")
-    public void shouldCorrectInvalidBech32mInput(String input, String corrected) {
+    void shouldCorrectInvalidBech32mInput(String input, String corrected) {
         String[] args = {
                 "decode",
                 "hex",
@@ -166,7 +166,7 @@ public class Bech32mDecodingTest {
 
     @ParameterizedTest
     @MethodSource("provideValidHexEncodedInputs")
-    public void shouldCreateOutputFile(String result, String input) {
+    void shouldCreateOutputFile(String result, String input) {
         String fileName = "output.txt";
         String[] args = {
                 "decode",

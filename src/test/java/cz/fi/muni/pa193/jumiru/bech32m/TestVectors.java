@@ -3,7 +3,7 @@ package cz.fi.muni.pa193.jumiru.bech32m;
 import cz.fi.muni.pa193.jumiru.converter.DataInputConverter;
 import cz.fi.muni.pa193.jumiru.converter.InputConverter;
 
-public class TestVectors {
+class TestVectors {
     private static final InputConverter INPUT_CONVERTER = new DataInputConverter();
 
     static final String[] VALID_BECH32M = {

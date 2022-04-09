@@ -8,25 +8,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-public class Bech32mModuleTest {
+class Bech32mModuleTest {
     private static final Bech32mModule module = new Bech32mModule();
 
     @Test
-    public void checkValidStringsTest() {
+    void checkValidStringsTest() {
         for (String testVector : TestVectors.VALID_BECH32M) {
             assertDoesNotThrow(() -> module.checkBech32mString(testVector));
         }
     }
 
     @Test
-    public void checkInvalidStringsTest() {
+    void checkInvalidStringsTest() {
         for (String testVector : TestVectors.INVALID_BECH32M) {
             assertThrows(Bech32mException.class, () -> module.checkBech32mString(testVector));
         }
     }
 
     @Test
-    public void checkInvalidChecksumTest() {
+    void checkInvalidChecksumTest() {
         for (String testVector : TestVectors.INVALID_BECH32M_CHECKSUM) {
             assertThrows(Bech32mInvalidChecksumException.class, () -> module
                     .decodeBech32mString(testVector, false));
@@ -34,7 +34,7 @@ public class Bech32mModuleTest {
     }
 
     @Test
-    public void errorCorrectionTest() {
+    void errorCorrectionTest() {
         for (int i = 0; i < TestVectors.INVALID_CORRECTS_TO_VALID_BECH32M.length; i++) {
             int finalI = i;
             Exception thrownException = assertThrows(Bech32mInvalidChecksumException.class, () -> module
@@ -47,7 +47,7 @@ public class Bech32mModuleTest {
     }
 
     @Test
-    public void decodeValidStringsTest() {
+    void decodeValidStringsTest() {
         for (int i = 0; i < TestVectors.VALID_BECH32M.length; i++) {
             assertEquals(module.decodeBech32mString(TestVectors.VALID_BECH32M[i], false),
                     TestVectors.VALID_BECH32_DECODINGS[i]);
@@ -55,7 +55,7 @@ public class Bech32mModuleTest {
     }
 
     @Test
-    public void encodeToValidStringsTest() {
+    void encodeToValidStringsTest() {
         for (int i = 0; i < TestVectors.VALID_BECH32M.length; i++) {
             //test vectors converted to lower case as encoder must always output lower case
             assertEquals(module.encodeBech32mString(TestVectors.VALID_BECH32_DECODINGS[i]),

@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 import static java.nio.file.Files.deleteIfExists;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class Bech32mEncodingTest {
+class Bech32mEncodingTest {
     private static final String helpMessage = System.lineSeparator() + "For correct usage, see README.md file" +
             System.lineSeparator();
 
@@ -74,7 +74,7 @@ public class Bech32mEncodingTest {
 
     @ParameterizedTest
     @MethodSource("provideValidHexEncodedInputs")
-    public void shouldReturnEncodedHex(String input, String result) {
+    void shouldReturnEncodedHex(String input, String result) {
         String[] args = {
                 "encode",
                 "hex",
@@ -88,7 +88,7 @@ public class Bech32mEncodingTest {
 
     @ParameterizedTest
     @MethodSource("provideValidBinEncodedInputs")
-    public void shouldReturnEncodedBin(String input, String result) {
+    void shouldReturnEncodedBin(String input, String result) {
         String[] args = {
                 "encode",
                 "bin",
@@ -102,7 +102,7 @@ public class Bech32mEncodingTest {
 
     @ParameterizedTest
     @MethodSource("provideValidBase64EncodedInputs")
-    public void shouldReturnEncodedBase64(String input, String result) {
+    void shouldReturnEncodedBase64(String input, String result) {
         String[] args = {
                 "encode",
                 "base64",
@@ -135,7 +135,7 @@ public class Bech32mEncodingTest {
 
     @ParameterizedTest
     @MethodSource("provideMapOfFormatsAndTooLongData")
-    public void shouldFailOnTooLongInput(String format, String input) {
+    void shouldFailOnTooLongInput(String format, String input) {
         String[] args = {
                 "encode",
                 format,
@@ -167,7 +167,7 @@ public class Bech32mEncodingTest {
 
     @ParameterizedTest
     @MethodSource("provideInvalidInputs")
-    public void shouldFailOnInvalidInputData(String format, String input) {
+    void shouldFailOnInvalidInputData(String format, String input) {
         String[] args = {
                 "encode",
                 format,
@@ -190,7 +190,7 @@ public class Bech32mEncodingTest {
 
     @ParameterizedTest
     @MethodSource("provideValidBase64EncodedInputs")
-    public void shoudldReadInputFromFile(String input, String result) {
+    void shoudldReadInputFromFile(String input, String result) {
         try (FileOutputStream outputStream = new FileOutputStream(input)) {
             byte[] strToBytes = input.getBytes();
             outputStream.write(strToBytes);
@@ -223,7 +223,7 @@ public class Bech32mEncodingTest {
 
     @ParameterizedTest
     @MethodSource("provideValidHexEncodedInputs")
-    public void shouldReadInputFromStandardInput(String input, String result) {
+    void shouldReadInputFromStandardInput(String input, String result) {
 
         String[] args = {
                 "encode",

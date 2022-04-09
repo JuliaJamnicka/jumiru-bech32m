@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 
-public class Bech32mInputConverterTest {
+class Bech32mInputConverterTest {
     private static final DataInputConverter converter = new DataInputConverter();
 
     private static Stream<Arguments> provideBinParams() {
@@ -61,7 +61,7 @@ public class Bech32mInputConverterTest {
 
     @ParameterizedTest
     @MethodSource("provideBinParams")
-    public void checkValidFromBinConversion(String bin, List<Byte> expected) {
+    void checkValidFromBinConversion(String bin, List<Byte> expected) {
         List<Byte> byteArray = converter.convertFromBinary(bin);
         assertEquals(byteArray, expected);
     }
@@ -106,14 +106,14 @@ public class Bech32mInputConverterTest {
 
     @ParameterizedTest
     @MethodSource("provideHexParams")
-    public void checkValidFromHexConversion(String hex, List<Byte> expected) {
+    void checkValidFromHexConversion(String hex, List<Byte> expected) {
         List<Byte> byteArray = converter.convertFromHex(hex);
         assertEquals(byteArray, expected);
     }
 
     @ParameterizedTest
     @MethodSource("provideBase64Params")
-    public void checkValidFromBase64Conversion(String base64string, List<Byte> expected) {
+    void checkValidFromBase64Conversion(String base64string, List<Byte> expected) {
         List<Byte> byteArray = converter.convertFromBase64(base64string);
         assertEquals(byteArray, expected);
     }

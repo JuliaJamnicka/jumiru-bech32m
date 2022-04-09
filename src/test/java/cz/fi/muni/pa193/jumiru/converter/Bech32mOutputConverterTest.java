@@ -11,12 +11,12 @@ import java.util.stream.Stream;
 import java.util.List;
 
 
-public class Bech32mOutputConverterTest {
+class Bech32mOutputConverterTest {
     private static final DataOutputConverter converter = new DataOutputConverter();
 
     @ParameterizedTest
     @MethodSource("provideBinParams")
-    public void checkValidBinaryConversion(String expected, List<Byte> toConvert) {
+    void checkValidBinaryConversion(String expected, List<Byte> toConvert) {
         Bech32mIOData data = new Bech32mIOData("", toConvert);
         assertEquals(converter.convertToBinary(data), expected);
     }
@@ -69,7 +69,7 @@ public class Bech32mOutputConverterTest {
 
     @ParameterizedTest
     @MethodSource("provideHexParams")
-    public void checkValidHexConversion(String expected, List<Byte> toConvert) {
+    void checkValidHexConversion(String expected, List<Byte> toConvert) {
         Bech32mIOData data = new Bech32mIOData("", toConvert);
         assertEquals(expected, converter.convertToHex(data));
     }
@@ -114,7 +114,7 @@ public class Bech32mOutputConverterTest {
 
     @ParameterizedTest
     @MethodSource("provideBase64Params")
-    public void checkValidBase64Conversion(String expected, List<Byte> toConvert) {
+    void checkValidBase64Conversion(String expected, List<Byte> toConvert) {
         Bech32mIOData data = new Bech32mIOData("", toConvert);
         assertEquals(expected, converter.convertToBase64(data));
     }

@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class UserInterfaceTest {
+class UserInterfaceTest {
     private static final String helpMessage = System.lineSeparator() + "For correct usage, see README.md file" +
             System.lineSeparator();
 
@@ -35,7 +35,7 @@ public class UserInterfaceTest {
 
     @ParameterizedTest
     @MethodSource("provideMapOfFormatsAndData")
-    public void noHRPartShouldFail(String format, String input) {
+    void noHRPartShouldFail(String format, String input) {
         String[] args = {
                 "encode",
                 format,
@@ -49,7 +49,7 @@ public class UserInterfaceTest {
 
     @ParameterizedTest
     @MethodSource("provideMapOfFormatsAndData")
-    public void emptyHRPartShouldFail(String format, String input) {
+    void emptyHRPartShouldFail(String format, String input) {
         String[] args = {
                 "encode",
                 format,
@@ -63,7 +63,7 @@ public class UserInterfaceTest {
     }
 
     @Test
-    public void shouldFailOnInvalidMode() {
+    void shouldFailOnInvalidMode() {
         String wrongMode = "dance";
         String[] args = {
                 wrongMode,
@@ -85,7 +85,7 @@ public class UserInterfaceTest {
     }
 
     @Test
-    public void shouldFailOnInvalidInputFormat() {
+    void shouldFailOnInvalidInputFormat() {
         String wrongFormat = "bass64";
         String[] args = {
                 "encode",
@@ -108,7 +108,7 @@ public class UserInterfaceTest {
     }
 
     @Test
-    public void shouldFailOnInvalidOutput() {
+    void shouldFailOnInvalidOutput() {
         String wrongOutput = "error";
         String[] args = {
                 "encode",
@@ -130,7 +130,7 @@ public class UserInterfaceTest {
     }
 
     @Test
-    public void shouldFailOnInvalidErrorDetect() {
+    void shouldFailOnInvalidErrorDetect() {
         String[] args = {
                 "decode",
                 "hex",
@@ -152,7 +152,7 @@ public class UserInterfaceTest {
     }
 
     @Test
-    public void shouldFailOnTooManyArguments() {
+    void shouldFailOnTooManyArguments() {
         String[] args = {
                 "decode",
                 "hex",
