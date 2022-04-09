@@ -192,13 +192,10 @@ public class Bech32mEncodingTest {
     @ParameterizedTest
     @MethodSource("provideValidBase64EncodedInputs")
     public void shoudldReadInputFromFile(String input, String result) {
-        try {
-            FileOutputStream outputStream = new FileOutputStream(input);
+        try (FileOutputStream outputStream = new FileOutputStream(input)) {
             byte[] strToBytes = input.getBytes();
             outputStream.write(strToBytes);
-
-            outputStream.close();
-        } catch (Exception exception) {
+        } catch (IOException exception) {
             fail();
         }
 

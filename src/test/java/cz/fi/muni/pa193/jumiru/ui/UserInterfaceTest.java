@@ -49,7 +49,7 @@ public class UserInterfaceTest {
 
     @ParameterizedTest
     @MethodSource("provideMapOfFormatsAndData")
-    public void EmptyHRPartShouldFail(String format, String input) {
+    public void emptyHRPartShouldFail(String format, String input) {
         String[] args = {
                 "encode",
                 format,
