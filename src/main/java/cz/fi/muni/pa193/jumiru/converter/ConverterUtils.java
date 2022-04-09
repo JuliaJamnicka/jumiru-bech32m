@@ -3,13 +3,18 @@ package cz.fi.muni.pa193.jumiru.converter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConverterUtils {
-    public static String padZerosToString(String input, int n) {
-        int zeroes_to_add = n - (input.length() % n);
-        return "0".repeat(zeroes_to_add % n) + input;
+public final class ConverterUtils {
+    private ConverterUtils() { }
+
+    static String padZerosToString(final String input, final int n) {
+        int zeroesToAdd = n - (input.length() % n);
+        return "0".repeat(zeroesToAdd % n) + input;
     }
 
-    public static List<Byte> convertBits(List<Byte> bytes, int fromBits, int toBits, boolean pad) {
+    static List<Byte> convertBits(final List<Byte> bytes,
+                                            final int fromBits,
+                                            final int toBits,
+                                            final boolean pad) {
         List<Byte> convertedBytes = new ArrayList<>();
 
         int acc = 0;
@@ -19,8 +24,8 @@ public class ConverterUtils {
 
         for (Byte b : bytes) {
             int unsigned = b & 0xff;
-            if (unsigned < 0 || (unsigned >> fromBits != 0)) {
-                throw new DataInputException(bytes.toString()); //this is ugly
+            if (unsigned >> fromBits != 0) {
+                throw new DataInputException(bytes.toString());
             }
 
             acc = ((acc << fromBits) | unsigned) & maxAcc;
@@ -34,10 +39,12 @@ public class ConverterUtils {
         }
         if (pad) {
             if (bits != 0) {
-                convertedBytes.add((byte) ((acc << (toBits - bits)) & maxValue));
+                Byte byteToAdd = (byte) ((acc << (toBits - bits)) & maxValue);
+                convertedBytes.add(byteToAdd);
             }
         } else {
-            if (bits >= fromBits || ((acc << (toBits - bits)) & maxValue) != 0) {
+            if (bits >= fromBits
+                || ((acc << (toBits - bits)) & maxValue) != 0) {
                 throw new DataInputException(bytes.toString());
             }
         }
