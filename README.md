@@ -1,7 +1,11 @@
 # jumiru-bech32m
 
-### Usage:
 There are two modes this application can run in, encode and decode, which have a slight difference in their usage.
+
+For security reasons, running the application in its own dedicated directory it is highly recommended (or specifying its working directory to a one dedicated to this application). Should it be run by an untrusted user, it must be ensured that the user cannot set JVM arguments.
+
+
+### Usage:
 
 required verbatim, **required group**, *required parameter*, [optional verbatim], (tuple)  
 
@@ -22,6 +26,8 @@ java - jar jumiru-1.0.jar decode **data_format input_destination output_destinat
 <br>
 
 *Note: Input from stdin must  be terminated by a newline*
+
+*Note: file_name must be in the current working directory to avoid arbitrary file writes/reads*
 
 ### Example usage
 
