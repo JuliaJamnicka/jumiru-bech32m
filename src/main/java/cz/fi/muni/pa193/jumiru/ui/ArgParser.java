@@ -156,7 +156,7 @@ public final class ArgParser {
 
     private void parseErrorDetection() {
         if (args.length > argIndex) {
-            if  (args[argIndex].equals("errdetect")) {
+            if  ("errdetect".equals(args[argIndex]) {
                 errorDetection = true;
                 argIndex++;
             } else {
